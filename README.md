@@ -38,9 +38,11 @@
 8. 書き込みが終わったら、Raspberry Pi PicoとSwitchを接続
 9. Raspberry Pi PicoとUSB-UART変換を接続する
 
-    Raspberry Pi Pico 1番ピン(UART0TX) <-------> USB-UART変換 RX
-    Raspberry Pi Pico 2番ピン(UART0RX) <-------> USB-UART変換 TX
-    Raspberry Pi Pico 3番ピン(GND)　　 <-------> USB-UART変換 GND
+~~~
+Raspberry Pi Pico 1番ピン(UART0TX) <-------> USB-UART変換 RX
+Raspberry Pi Pico 2番ピン(UART0RX) <-------> USB-UART変換 TX
+Raspberry Pi Pico 3番ピン(GND)　　 <-------> USB-UART変換 GND
+~~~
 
 10. USB-UART変換をPCと接続
 
