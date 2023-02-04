@@ -11,8 +11,8 @@
 必要なもの
 
     Raspberry Pi Pico 1台
-    USB-Serial変換 1台
-    USB ロケーブル 2本(PCとUSB-Serial変換、Raspberry Pi PicoとSwitchの接続用)
+    USB-UART変換 1台
+    USB ロケーブル 2本(PCとUSB-UART変換、Raspberry Pi PicoとSwitchの接続用)
 
 動作環境
 
