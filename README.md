@@ -47,10 +47,6 @@ Raspberry Pi Pico 3番ピン(GND)　　 <-------> USB-UART変換 GND
 
 Poke Controller側のCOM Port番号をUSB-UART変換のものに合わせてSwitch Controller Simulatorなどでボタンを押して動作確認してください
 
-# 注意
-
-キーボード入力には対応してません
-
 # Lisence
 
 このプロジェクトのライセンスはMITライセンスです。詳細はLICENSEをご覧ください
