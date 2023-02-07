@@ -18,7 +18,6 @@
 
     Arduino IDE(1.8.19推奨)
     Arduino-Pico(v2.7.1)
-    SwitchControllerPico
 
 # 使い方
 
@@ -32,7 +31,7 @@
 2. RPI-RP2デバイスが認識される。フォルダは閉じる
 3. Arduino IDEを立ち上げる
 4. ツール→ボード→Raspberry Pi RP2040 Board(2.7.1)→Raspberry Pi Picoを選択
-5. ツール→USB Stack→Adafruit Tiny USBを選択
+5. ツール→USB Stack→No USBを選択
 6. ファイル→開くでスケッチ(PokeControllerForPico.ino)を開く
 7. スケッチ→マイコンボードへ書き込む
 8. 書き込みが終わったら、Raspberry Pi PicoとSwitchを接続

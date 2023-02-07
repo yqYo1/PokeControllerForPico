@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Arduino.h"
-#include "SwitchControllerPico.h"
+#include "tusb.h"
+#include "usb_descriptors.h"
+#include "CustomKeyboard.h"
 
 #define	INDEX_ARRAY_YEAR  (30)
 #define	INDEX_ARRAY_MONTH (32)
@@ -78,6 +80,17 @@ typedef struct
   int duration;
   int waittime;
 } SetCommand;
+
+typedef struct TU_ATTR_PACKED
+{
+  uint16_t	Button;
+  uint8_t		Hat;
+  uint8_t		LX;
+  uint8_t		LY;
+  uint8_t		RX;
+  uint8_t		RY;
+  uint8_t		Vendor;
+} USB_JoystickReport_Input_t;
 
 const SetCommand mash_a_commands[] =
 {

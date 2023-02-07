@@ -94,7 +94,7 @@ void GetNextReportFromCommandsforChangeTheYear(const SetCommand* commands, const
 USB_JoystickReport_Input_t ApplyButtonCommand(const SetCommand* commands, USB_JoystickReport_Input_t ReportData);
 void Type_string(char* str);
 void Type_stringBySerialCommunication(void);
-void Keyboard_write(char ch);
+void sendReportOnly(USB_JoystickReport_Input_t report);
 
 void Serial1_Init(void)
 {
@@ -104,13 +104,11 @@ void Serial1_Init(void)
 
 void Controller_Init(void)
 {
-  switchcontrollerpico_init();
+  tusb_init();
 }
 
 void Controller_Reset(void)
 {
-  // wait until device mounted
-  while( !TinyUSBDevice.mounted() ) delay(1);
   ResetDirections();//送信するデータをリセットする
   /* 認識させるため、複数回Switchにデータを送信する */
   for (int i = 0; i < 5; i++)
@@ -122,7 +120,7 @@ void Controller_Reset(void)
 
 void Keyboard_Init(void)
 {
-
+  key_releaseAll();
 }
 
 /* 送信するデータをリセットする */
@@ -666,17 +664,15 @@ void SwitchFunction(void)
       ProgState = STATE0;
       break;
     case PC_CALL_KEYBOARD:
-      //BootKeyboard_WriteSpecialKey(KeyValue);
-      //CustomKeyboard().pushkey(KeyValue);
-      //Keyboard_write(KeyValue);
+      specialkey_write(KeyValue);
       ProgState = STATE0;
       break;
     case PC_CALL_KEYBOARD_PRESS:
-      //usb_hid.keyboardPress(1, KeyValue);
+      specialkey_press(KeyValue);
       ProgState = STATE0;
       break;
     case PC_CALL_KEYBOARD_RELEASE:
-      //usb_hid.keyboardRelease(1);
+      specialkey_release(KeyValue);
       ProgState = STATE0;
       break;
     case MASH_A:
@@ -725,7 +721,7 @@ void Type_string(char* str)
     }
     else
     {
-      //Keyboard_write(t_str[len]);
+      key_write(t_str[len]);
     }
     len++;
   }
@@ -740,10 +736,18 @@ void Type_stringBySerialCommunication(void)
   delay(40);
 }
 
-void Keyboard_write(char ch)
+void sendReportOnly(USB_JoystickReport_Input_t report)
 {
-  usb_hid.keyboardPress(1, KeyValue);
-  delay(30);
-  usb_hid.keyboardRelease(1);
-  delay(30);
+    USB_JoystickReport_Input_t sendBuffer;
+	// Wait for previous transmission to complete.
+	while (tud_ready() && !tud_hid_ready())
+	{
+		tud_task();
+	}
+
+	memcpy(&sendBuffer, &report, sizeof(USB_JoystickReport_Input_t));
+	if (tud_hid_ready())
+	{
+		tud_hid_report(0, &sendBuffer, sizeof(USB_JoystickReport_Input_t));
+	}
 }

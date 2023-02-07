@@ -4,14 +4,6 @@ int ProgState = STATE0;
 static char pc_report_str[MAX_BUFFER];
 static uint8_t idx = 0;
 
-const uint8_t desc_hid_report[] =
-{
-  CUSTOM_DESCRIPTOR,
-  // TUD_HID_REPORT_DESC_KEYBOARD( HID_REPORT_ID(1) )
-};
-
-Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_NONE, 2, false);
-
 void setup() {
   Serial1_Init();    // RX←0でのシリアル通信
   Controller_Init(); // コントローラーの準備
@@ -20,6 +12,7 @@ void setup() {
 }
 
 void loop() {
+  tud_task(); // tinyusb device task
   //状態に応じて切り替える
   switch (ProgState)
   {
