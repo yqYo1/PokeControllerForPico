@@ -1,0 +1,29 @@
+name: Build Firmware
+on: [push, pull_request ]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Configure build environment
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install rp2040:rp2040@2.7.1
+
+      - name: Compile firmware
+        run: |
+          arduino-cli compile --fqbn rp2040:rp2040:rpipico \
+            --build-property "build.usb_stack=no_usb" \
+            --output-dir ./build \
+            PokeControllerForPico/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pico-firmware
+          path: ./build/
