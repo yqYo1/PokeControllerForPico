@@ -21,8 +21,8 @@ jobs:
       - name: Compile firmware
         run: |
           arduino-cli compile \
-            --fqbn rp2040:rp2040:rpipico::usbstack=tinyusb \
-            --export-binaries \
+            --fqbn rp2040:rp2040:rpipico:usbstack=tinyusb \
+            # --export-binaries \
             --output-dir ./build \
             ./PokeControllerForPico/
 
