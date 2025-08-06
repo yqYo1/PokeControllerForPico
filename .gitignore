@@ -1,0 +1,21 @@
+# all ignore
+/*
+/**
+
+# github actions
+!/.github/
+/.github/*
+!/.github/workflows/
+/.github/workflows/*
+
+
+!/.gitignore
+!/LICENSE
+!/README.md
+!/.clangd
+!/PokeControllerForPico/
+/PokeControllerForPico/*
+!/PokeControllerForPico/.h
+!/PokeControllerForPico/.ino
+!/PokeControllerForPico/.c
+!/PokeControllerForPico/.cpp
