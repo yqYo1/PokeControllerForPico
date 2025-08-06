@@ -26,10 +26,10 @@ jobs:
             ./PokeControllerForPico/
 
       - name: Rename file
-        run: mv ./build/PokeControllerForPico.ino.uf2 ./PokeControllerForPico-${{ github.sha }}.uf2
+        run: mv ./build/PokeControllerForPico.ino.uf2 ./PokeControllerForPico.uf2
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: pico-firmware
-          path: ./PokeControllerForPico-${{ github.sha }}.uf2
+          path: ./PokeControllerForPico.uf2
