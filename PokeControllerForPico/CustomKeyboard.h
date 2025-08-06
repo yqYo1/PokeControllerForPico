@@ -3,8 +3,8 @@
 #define HID_CUSTOM_LAYOUT
 #define LAYOUT_JAPANESE
 #include "Arduino.h"
-#include "stdint.h"
 #include "ImprovedKeyLayouts.h"
+#include "stdint.h"
 #include "usb_descriptors.h"
 
 size_t key_press(uint8_t c);

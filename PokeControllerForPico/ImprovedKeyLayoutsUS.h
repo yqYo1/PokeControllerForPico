@@ -26,21 +26,7 @@ THE SOFTWARE.
 
 #include "ImprovedKeylayouts.h"
 
-// Key aliases
-#define KEY_JP_COLON        KEY_NON_US
-#define KEY_JP_AT           KEY_NON_US
-#define KEY_JP_CARET        KEY_NON_US
-
-#define KEY_JP_HANZEN       KEY_TILDE
-#define KEY_JP_KANJI        KEY_TILDE // Alias
-#define KEY_JP_BACKSLASH    KEY_INTERNATIONAL1
-#define KEY_JP_HIRAGANA     KEY_INTERNATIONAL2
-#define KEY_JP_YEN          KEY_INTERNATIONAL3
-#define KEY_JP_HENKAN       KEY_INTERNATIONAL4
-#define KEY_JP_MUHENKAN     KEY_INTERNATIONAL5
-
-
-static const uint16_t _asciimap[] =
+static const uint16_t _asciimap[] PROGMEM =
 {
     KEY_RESERVED,                       // NUL
     KEY_RESERVED,                       // SOH
@@ -77,16 +63,16 @@ static const uint16_t _asciimap[] =
 
     KEY_SPACE,                          // ' ' Space
     KEY_1|MOD_LEFT_SHIFT,               // !
-    KEY_2|MOD_LEFT_SHIFT,               // "
+    KEY_QUOTE|MOD_LEFT_SHIFT,           // "
     KEY_3|MOD_LEFT_SHIFT,               // #
     KEY_4|MOD_LEFT_SHIFT,               // $
     KEY_5|MOD_LEFT_SHIFT,               // %
-    KEY_6|MOD_LEFT_SHIFT,               // &
-    KEY_7|MOD_LEFT_SHIFT,               // '
-    KEY_8|MOD_LEFT_SHIFT,               // (
-    KEY_9|MOD_LEFT_SHIFT,               // )
-    KEY_QUOTE|MOD_LEFT_SHIFT,           // *
-    KEY_SEMICOLON|MOD_LEFT_SHIFT,       // +
+    KEY_7|MOD_LEFT_SHIFT,               // &
+    KEY_QUOTE,                          // '
+    KEY_9|MOD_LEFT_SHIFT,               // (
+    KEY_0|MOD_LEFT_SHIFT,               // )
+    KEY_8|MOD_LEFT_SHIFT,               // *
+    KEY_EQUAL|MOD_LEFT_SHIFT,           // +
     KEY_COMMA,                          // ,
     KEY_MINUS,                          // -
     KEY_PERIOD,                         // .
@@ -101,13 +87,13 @@ static const uint16_t _asciimap[] =
     KEY_7,                              // 7
     KEY_8,                              // 8
     KEY_9,                              // 9
-    KEY_QUOTE,                          // :
+    KEY_SEMICOLON|MOD_LEFT_SHIFT,       // :
     KEY_SEMICOLON,                      // ;
     KEY_COMMA|MOD_LEFT_SHIFT,           // <
-    KEY_MINUS|MOD_LEFT_SHIFT,           // =
+    KEY_EQUAL,                          // =
     KEY_PERIOD|MOD_LEFT_SHIFT,          // >
     KEY_SLASH|MOD_LEFT_SHIFT,           // ?
-    KEY_LEFT_BRACE,                     // @
+    KEY_2|MOD_LEFT_SHIFT,               // @
     KEY_A|MOD_LEFT_SHIFT,               // A
     KEY_B|MOD_LEFT_SHIFT,               // B
     KEY_C|MOD_LEFT_SHIFT,               // C
@@ -134,12 +120,12 @@ static const uint16_t _asciimap[] =
     KEY_X|MOD_LEFT_SHIFT,               // X
     KEY_Y|MOD_LEFT_SHIFT,               // Y
     KEY_Z|MOD_LEFT_SHIFT,               // Z
-    KEY_RIGHT_BRACE,                    // [
-    KEY_JP_BACKSLASH,                   // bslash
-    KEY_BACKSLASH,                      // ]
-    KEY_EQUAL,                          // ^
-    KEY_JP_BACKSLASH|MOD_LEFT_SHIFT,    // _
-    KEY_LEFT_BRACE|MOD_LEFT_SHIFT,      // `
+    KEY_LEFT_BRACE,                     // [
+    KEY_BACKSLASH,                      // bslash
+    KEY_RIGHT_BRACE,                    // ]
+    KEY_6|MOD_LEFT_SHIFT,               // ^
+    KEY_MINUS|MOD_LEFT_SHIFT,           // _
+    KEY_TILDE,                          // `
     KEY_A,                              // a
     KEY_B,                              // b
     KEY_C,                              // c
@@ -166,11 +152,11 @@ static const uint16_t _asciimap[] =
     KEY_X,                              // x
     KEY_Y,                              // y
     KEY_Z,                              // z
-    KEY_RIGHT_BRACE|MOD_LEFT_SHIFT,     // {
-    KEY_JP_YEN|MOD_LEFT_SHIFT,          // |
-    KEY_BACKSLASH|MOD_LEFT_SHIFT,       // }
-    KEY_EQUAL|MOD_LEFT_SHIFT,           // ~
-    KEY_RESERVED,                       // 127 - DEL
+    KEY_LEFT_BRACE|MOD_LEFT_SHIFT,      // {
+    KEY_BACKSLASH|MOD_LEFT_SHIFT,       // |
+    KEY_RIGHT_BRACE|MOD_LEFT_SHIFT,     // }
+    KEY_TILDE|MOD_LEFT_SHIFT,           // ~
+    KEY_RESERVED,                       // DEL
     // 7-bit ASCII codes end here
 
     // The following characters belong to ISO-8859-15
