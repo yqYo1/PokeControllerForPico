@@ -22,7 +22,7 @@ jobs:
         run: |
           arduino-cli compile \
             --fqbn rp2040:rp2040:rpipico:usbstack=tinyusb \
-            # --export-binaries \
+            --export-binaries \
             --output-dir ./build \
             ./PokeControllerForPico/
 
