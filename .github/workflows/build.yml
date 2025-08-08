@@ -4,6 +4,9 @@ on: [push, pull_request ]
 jobs:
   Build-firmware:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [ rpipico, rpipico2 ]
     steps:
       - uses: actions/checkout@v4
 
@@ -20,20 +23,20 @@ jobs:
       - name: Compile firmware
         run: |
           arduino-cli compile \
-            --fqbn rp2040:rp2040:rpipico:usbstack=nousb \
+            --fqbn rp2040:rp2040:${{ matrix.board }}:usbstack=nousb \
             --build-property 'compiler.cpp.extra_flags=-DARDUINO_FQBN="{build.fqbn}"' \
             --export-binaries \
             --output-dir ./build \
             ./PokeControllerForPico/
 
       - name: Rename file
-        run: mv ./build/PokeControllerForPico.ino.uf2 ./PokeControllerForPico.uf2
+        run: mv ./build/PokeControllerForPico.ino.uf2 ./PokeControllerForPico-${{ matrix.board }}.uf2
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: pico-firmware
-          path: ./PokeControllerForPico.uf2
+          path: ./PokeControllerForPico-${{ matrix.board }}.uf2
 
   Release-nightly:
     name: Create Nightly Release
