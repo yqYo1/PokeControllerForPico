@@ -30,7 +30,7 @@
 1. Raspberry Pi PicoのBOOT SELボタンを押しながらPCと接続
 2. RPI-RP2デバイスが認識される。フォルダは閉じる
 3. Arduino IDEを立ち上げる
-4. ツール→ボード→Raspberry Pi RP2040 Board(2.7.1)→Raspberry Pi Picoを選択
+4. ツール→ボード→Raspberry Pi RP2040 Board(4.6.1)→Raspberry Pi Picoを選択
 5. ツール→USB Stack→No USBを選択
 6. ファイル→開くでスケッチ(PokeControllerForPico.ino)を開く
 7. スケッチ→マイコンボードへ書き込む
