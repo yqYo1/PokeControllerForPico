@@ -21,6 +21,7 @@ jobs:
         run: |
           arduino-cli compile \
             --fqbn rp2040:rp2040:rpipico:usbstack=nousb \
+            --build-property 'compiler.cpp.extra_flags=-DARDUINO_FQBN="{build.fqbn}"' \
             --export-binaries \
             --output-dir ./build \
             ./PokeControllerForPico/
