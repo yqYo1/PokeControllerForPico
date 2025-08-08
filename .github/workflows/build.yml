@@ -35,7 +35,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: pico-firmware
+          name: pico-firmware-${{ matrix.board }}
           path: ./PokeControllerForPico-${{ matrix.board }}.uf2
 
   Release-nightly:
