@@ -14,7 +14,17 @@ size_t key_press(uint8_t c)
 {
   uint8_t i;
   uint16_t k = _asciimap[c];
-  _keyReport.keys[0] = k >> 8;
+  uint16_t m = k >> 8;
+  uint8_t M = 0;
+  if (m & (MOD_LEFT_CTRL >> 8)) M |= (1 << 0);
+  if (m & (MOD_LEFT_SHIFT >> 8)) M |= (1 << 1);
+  if (m & (MOD_LEFT_ALT >> 8)) M |= (1 << 2);
+  if (m & (MOD_LEFT_GUI >> 8)) M |= (1 << 3);
+  if (m & (MOD_RIGHT_CTRL >> 8)) M |= (1 << 4);
+  if (m & (MOD_RIGHT_SHIFT >> 8)) M |= (1 << 5);
+  if (m & (MOD_RIGHT_ALT >> 8)) M |= (1 << 6);
+  if (m & (MOD_RIGHT_GUI >> 8)) M |= (1 << 7);
+  _keyReport.modifiers |= M;
   c = (uint8_t)(k & 0xFF);
 
 	// Add k to the key report only if it's not already present
@@ -42,7 +52,17 @@ size_t key_release(uint8_t c)
 {
   uint8_t i;
   uint16_t k = _asciimap[c];
-  _keyReport.keys[0] &= ~(k >> 8);
+  uint16_t m = k >> 8;
+  uint8_t M = 0;
+  if (m & (MOD_LEFT_CTRL >> 8)) M |= (1 << 0);
+  if (m & (MOD_LEFT_SHIFT >> 8)) M |= (1 << 1);
+  if (m & (MOD_LEFT_ALT >> 8)) M |= (1 << 2);
+  if (m & (MOD_LEFT_GUI >> 8)) M |= (1 << 3);
+  if (m & (MOD_RIGHT_CTRL >> 8)) M |= (1 << 4);
+  if (m & (MOD_RIGHT_SHIFT >> 8)) M |= (1 << 5);
+  if (m & (MOD_RIGHT_ALT >> 8)) M |= (1 << 6);
+  if (m & (MOD_RIGHT_GUI >> 8)) M |= (1 << 7);
+  _keyReport.modifiers &= ~M;
   c = (uint8_t)(k & 0xFF);
 
 	for (i=0; i<6; i++) {
@@ -65,7 +85,17 @@ size_t specialkey_press(uint8_t c)
       (c != KEY_DOWN_ARROW)  && (c != KEY_LEFT_ARROW)   &&
       (c != KEY_RIGHT_ARROW)) {
     uint16_t k = _asciimap[c];
-    _keyReport.keys[0] = k >> 8;
+    uint16_t m = k >> 8;
+    uint8_t M = 0;
+    if (m & (MOD_LEFT_CTRL >> 8)) M |= (1 << 0);
+    if (m & (MOD_LEFT_SHIFT >> 8)) M |= (1 << 1);
+    if (m & (MOD_LEFT_ALT >> 8)) M |= (1 << 2);
+    if (m & (MOD_LEFT_GUI >> 8)) M |= (1 << 3);
+    if (m & (MOD_RIGHT_CTRL >> 8)) M |= (1 << 4);
+    if (m & (MOD_RIGHT_SHIFT >> 8)) M |= (1 << 5);
+    if (m & (MOD_RIGHT_ALT >> 8)) M |= (1 << 6);
+    if (m & (MOD_RIGHT_GUI >> 8)) M |= (1 << 7);
+    _keyReport.modifiers |= M;
     c = (uint8_t)(k & 0xFF);
   }
   uint8_t i;
@@ -98,7 +128,17 @@ size_t specialkey_release(uint8_t c)
       (c != KEY_DOWN_ARROW)  && (c != KEY_LEFT_ARROW)   &&
       (c != KEY_RIGHT_ARROW)) {
     uint16_t k = _asciimap[c];
-    _keyReport.keys[0] &= ~(k >> 8);
+    uint16_t m = k >> 8;
+    uint8_t M = 0;
+    if (m & (MOD_LEFT_CTRL >> 8)) M |= (1 << 0);
+    if (m & (MOD_LEFT_SHIFT >> 8)) M |= (1 << 1);
+    if (m & (MOD_LEFT_ALT >> 8)) M |= (1 << 2);
+    if (m & (MOD_LEFT_GUI >> 8)) M |= (1 << 3);
+    if (m & (MOD_RIGHT_CTRL >> 8)) M |= (1 << 4);
+    if (m & (MOD_RIGHT_SHIFT >> 8)) M |= (1 << 5);
+    if (m & (MOD_RIGHT_ALT >> 8)) M |= (1 << 6);
+    if (m & (MOD_RIGHT_GUI >> 8)) M |= (1 << 7);
+    _keyReport.modifiers &= ~M;
     c = (uint8_t)(k & 0xFF);
   }
 	uint8_t i;
