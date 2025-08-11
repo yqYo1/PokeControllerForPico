@@ -8,6 +8,7 @@
 !/.github/workflows/
 /.github/workflows/*
 !/.github/workflows/build.yml
+!/.github/workflows/nightly-release.yml
 
 
 !/.gitignore

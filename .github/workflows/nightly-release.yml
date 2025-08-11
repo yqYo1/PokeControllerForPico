@@ -1,0 +1,87 @@
+name: Make Nightly Release
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+  
+permissions:
+  contents: write
+
+jobs:
+  check-for-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check.outputs.has_changes }}
+
+    steps:
+      - name: Checkout repository with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes since last Nightly-build tag
+        id: check
+        run: |
+          # 'Nightly-build' タグが存在するか確認
+          # git tag --list はタグが存在しない場合、何も出力しない
+          LATEST_TAG=$(git tag --list "Nightly-build")
+
+          CHANGES_COUNT=0
+          if; then
+            echo "No previous 'Nightly-build' tag found. This is the first run or the tag was deleted."
+            # タグがない場合は、変更ありとみなし、ビルドを実行
+            CHANGES_COUNT=1
+          else
+            echo "Previous 'Nightly-build' tag found. Comparing with HEAD."
+            # 'Nightly-build' タグからHEADまでのコミット数をカウント
+            # `git diff` よりも `git rev-list --count` の方が確実
+            CHANGES_COUNT=$(git rev-list Nightly-build..HEAD --count)
+          fi
+
+          echo "Found $CHANGES_COUNT new commits."
+
+          if; then
+            echo "Changes detected. Proceeding with nightly build."
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes detected since last nightly build."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+  call-build:
+    needs: check-for-changes
+    if: needs.check-for-changes.outputs.has_changes == 'true'
+    uses: ./.github/workflows/build.yml@main
+    
+    secrets: inherit
+
+  create-release-nightly:
+    needs: [check-for-changes, call-build]
+    if: needs.check-for-changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./release-assets
+
+      - name: Display structure of downloaded files
+        run: ls -R ./release-assets
+
+      - name: Delete and Recreate GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. 既存のリリースを削除します。これにより関連するタグも削除されます。
+          #    リリースが存在しない場合(初回実行時など)にエラーで止まらないよう `|| true` を付けます。
+          echo "Deleting existing Nightly-build release if it exists..."
+          gh release delete Nightly-build --yes || true
+
+          # 2. 最新のコミットに対して、同じ名前で新しいプレリリースを作成します。
+          #    このコマンドは 'Nightly-build' タグが存在しない場合、自動で作成します。
+          echo "Creating new Nightly-build pre-release..."
+          gh release create Nightly-build ./release-assets/**/*.uf2 \
+            --prerelease \
+            --title "Nightly Build (Updated $(date --utc +'%Y-%m-%d %H:%M:%S UTC'))" \
+            --notes "This is the latest automated nightly build. All artifacts are overwritten with each new build."
