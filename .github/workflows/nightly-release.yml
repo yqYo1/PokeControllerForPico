@@ -25,9 +25,10 @@ jobs:
           # 'Nightly-build' タグが存在するか確認
           # git tag --list はタグが存在しない場合、何も出力しない
           LATEST_TAG=$(git tag --list "Nightly-build")
+          echo $LATEST_TAG
 
           CHANGES_COUNT=0
-          if; then
+          if [ -z $LATEST_TAG ]; then
             echo "No previous 'Nightly-build' tag found. This is the first run or the tag was deleted."
             # タグがない場合は、変更ありとみなし、ビルドを実行
             CHANGES_COUNT=1
@@ -40,7 +41,7 @@ jobs:
 
           echo "Found $CHANGES_COUNT new commits."
 
-          if; then
+          if [$CHANGES_COUNT -gt 0]; then
             echo "Changes detected. Proceeding with nightly build."
             echo "has_changes=true" >> $GITHUB_OUTPUT
           else
