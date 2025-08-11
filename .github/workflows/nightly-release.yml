@@ -81,12 +81,13 @@ jobs:
           # 1. 既存のリリースを削除します。これにより関連するタグも削除されます。
           #    リリースが存在しない場合(初回実行時など)にエラーで止まらないよう `|| true` を付けます。
           echo "Deleting existing Nightly-build release if it exists..."
-          gh release delete Nightly-build --yes || true
+          gh release delete Nightly-build --cleanup-tag --yes || true
 
            # 2. 最新のコミットに対して、同じ名前で新しいプレリリースを作成します。
           #    このコマンドは 'Nightly-build' タグが存在しない場合、自動で作成します。
-          echo "Creating new Nightly-build pre-release..."
+          echo "Creating new Nightly-build pre-release for commit ${{ github.sha }}..."
           gh release create Nightly-build ./artifacts/**/*.uf2 \
+            --target ${{ github.sha }} \
             --prerelease \
             --title "Nightly Build (Updated $(date --utc +'%Y-%m-%d %H:%M:%S UTC'))" \
             --notes "This is the latest automated nightly build. All artifacts are overwritten with each new build."
