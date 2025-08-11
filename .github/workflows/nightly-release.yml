@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   check-for-changes:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     outputs:
       has_changes: ${{ steps.check.outputs.has_changes }}
