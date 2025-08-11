@@ -3,7 +3,7 @@ on:
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
-  
+
 permissions:
   contents: write
 
@@ -51,8 +51,8 @@ jobs:
   call-build:
     needs: check-for-changes
     if: needs.check-for-changes.outputs.has_changes == 'true'
-    uses: ./.github/workflows/build.yml@main
-    
+    uses: ./.github/workflows/build.yml
+
     secrets: inherit
 
   create-release-nightly:
