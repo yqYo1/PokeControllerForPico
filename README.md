@@ -12,7 +12,7 @@
 
 - [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/)又は[Raspberry Pi Pico2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) 1台
 - USB-Serial変換器 1台
-- USB ケーブル 2本(PCとUSB-UART変換、Raspberry Pi PicoとSwitchの接続用)
+- USB ケーブル 2本(PCとUSB-Serial変換器、Raspberry Pi PicoとSwitchの接続用)
 - PicoとUSB-Serial変換器を接続用のジャンパ線等
     - Raspberry Pi Pico Hなどの名前で売られている半田付け済のモデルを購入しない場合、自前で半田付けする必要がある
 
@@ -29,17 +29,17 @@
 2. Picoがストレージとして認識されるのでファイラーで開く
 3. ダウンロードしたuf2ファイルをフォルダにコピーする
 4. 書き込みが終わったら、Raspberry Pi PicoとSwitchを接続
-5. Raspberry Pi PicoとUSB-UART変換を接続する
+5. Raspberry Pi PicoとUSB-Serial変換器を接続する
 
 ~~~
-Raspberry Pi Pico 1番ピン(UART0TX) <-------> USB-UART変換 RX
-Raspberry Pi Pico 2番ピン(UART0RX) <-------> USB-UART変換 TX
-Raspberry Pi Pico 3番ピン(GND)     <-------> USB-UART変換 GND
+Raspberry Pi Pico 1番ピン(UART0TX) <-------> USB-Serial変換器 RX
+Raspberry Pi Pico 2番ピン(UART0RX) <-------> USB-Serial変換器 TX
+Raspberry Pi Pico 3番ピン(GND)     <-------> USB-Serial変換器 GND
 ~~~
 
-6. USB-UART変換をPCと接続
+6. USB-Serial変換器をPCと接続
 
-Poke Controller側のCOM Port番号をUSB-UART変換のものに合わせてSwitch Controller Simulatorなどでボタンを押して動作確認してください
+Poke Controller側のCOM Port番号をUSB-Serial変換器のものに合わせてSwitch Controller Simulatorなどでボタンを押して動作確認してください
 
 # Lisence
 
