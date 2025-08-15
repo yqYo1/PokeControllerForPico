@@ -1,6 +1,6 @@
 # PokeControllerForPico
 
-[Poke Controller Modified](https://github.com/Moi-poke/Poke-Controller-Modified)とSwitch間を中継するソフトウェア
+[Poke Controller Modified](https://github.com/Moi-poke/Poke-Controller-Modified)や[Poke Controller Modified Extension](https://github.com/futo030/Poke-Controller-Modified-Extension)とSwitch間を中継するソフトウェア
 
 # このソフトウェアについて
 
@@ -10,43 +10,37 @@
 
 必要なもの
 
-    Raspberry Pi Pico 1台
-    USB-UART変換 1台
-    USB ロケーブル 2本(PCとUSB-UART変換、Raspberry Pi PicoとSwitchの接続用)
-
-動作環境
-
-    Arduino IDE(1.8.19推奨)
-    Arduino-Pico(v2.7.1)
+- [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/)又は[Raspberry Pi Pico2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) 1台
+- USB-Serial変換器 1台
+- USB ケーブル 2本(PCとUSB-UART変換、Raspberry Pi PicoとSwitchの接続用)
+- PicoとUSB-Serial変換器を接続用のジャンパ線等
+    - Raspberry Pi Pico Hなどの名前で売られている半田付け済のモデルを購入しない場合、自前で半田付けする必要がある
 
 # 使い方
 
 ## ソフトウェアのダウンロード
 
-このリポジトリをダウンロードし適当なフォルダへ展開
+このリポジトリの[Releasesページ](https://github.com/yqYo1/PokeControllerForPico/releases)からボードに対応するuf2ファイルをダウンロードする
+- Picoの場合は末尾が`rppico.uf2`を、Picoの場合は末尾が`rppico2.uf2`のファイルをダウンロードする
 
 ## 書き込み
 
-1. Raspberry Pi PicoのBOOT SELボタンを押しながらPCと接続
-2. RPI-RP2デバイスが認識される。フォルダは閉じる
-3. Arduino IDEを立ち上げる
-4. ツール→ボード→Raspberry Pi RP2040 Board(4.6.1)→Raspberry Pi Picoを選択
-5. ツール→USB Stack→No USBを選択
-6. ファイル→開くでスケッチ(PokeControllerForPico.ino)を開く
-7. スケッチ→マイコンボードへ書き込む
-8. 書き込みが終わったら、Raspberry Pi PicoとSwitchを接続
-9. Raspberry Pi PicoとUSB-UART変換を接続する
+1. PicoのBOOT SELボタンを押しながらPCと接続
+2. Picoがストレージとして認識されるのでファイラーで開く
+3. ダウンロードしたuf2ファイルをフォルダにコピーする
+4. 書き込みが終わったら、Raspberry Pi PicoとSwitchを接続
+5. Raspberry Pi PicoとUSB-UART変換を接続する
 
 ~~~
 Raspberry Pi Pico 1番ピン(UART0TX) <-------> USB-UART変換 RX
 Raspberry Pi Pico 2番ピン(UART0RX) <-------> USB-UART変換 TX
-Raspberry Pi Pico 3番ピン(GND)　　 <-------> USB-UART変換 GND
+Raspberry Pi Pico 3番ピン(GND)     <-------> USB-UART変換 GND
 ~~~
 
-10. USB-UART変換をPCと接続
+6. USB-UART変換をPCと接続
 
 Poke Controller側のCOM Port番号をUSB-UART変換のものに合わせてSwitch Controller Simulatorなどでボタンを押して動作確認してください
 
 # Lisence
 
-このプロジェクトのライセンスはMITライセンスです。詳細はLICENSEをご覧ください
+このプロジェクトのライセンスはMITライセンスです。詳細は[LICENSE](https://github.com/yqYo1/PokeControllerForPico/blob/master/LICENSE)をご覧ください
