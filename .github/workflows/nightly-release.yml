@@ -42,7 +42,7 @@ jobs:
 
           echo "Found $CHANGES_COUNT new commits."
 
-          if [ $CHANGES_COUNT > 0 ]; then
+          if [[ $CHANGES_COUNT -ge 1 ]]; then
             echo "Changes detected. Proceeding with nightly build."
             echo "has_changes=true" >> $GITHUB_OUTPUT
           else
