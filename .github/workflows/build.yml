@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        board: [ rpipico, rpipico2 ]
+        sku: [ pico, pico2 ]
     steps:
       - uses: actions/checkout@v4
 
@@ -14,27 +14,13 @@ jobs:
         uses: arduino/setup-arduino-cli@v2
 
       - name: Configure build environment
-        run: |
-          arduino-cli config init
-          arduino-cli config set board_manager.additional_urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
-          arduino-cli core update-index
-          arduino-cli core install rp2040:rp2040@4.6.1
+        run: make setup
 
       - name: Compile firmware
-        run: |
-          arduino-cli compile \
-            --fqbn rp2040:rp2040:${{ matrix.board }}:usbstack=nousb \
-            --build-property 'compiler.cpp.extra_flags=-DARDUINO_FQBN="{build.fqbn}"' \
-            --export-binaries \
-            --output-dir ./build \
-            ./PokeControllerForPico/
-
-      - name: Rename file
-        run: mv ./build/PokeControllerForPico.ino.uf2 ./PokeControllerForPico-${{ matrix.board }}.uf2
+        run: make build ${{ matrix.sku }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: pico-firmware-${{ matrix.board }}
-          path: ./PokeControllerForPico-${{ matrix.board }}.uf2
-
+          name: pico-firmware-${{ matrix.sku }}
+          path: ./PokeControllerForPico-${{ matrix.sku }}.uf2
