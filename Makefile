@@ -2,8 +2,8 @@
 
 # --- Variables ---
 # This allows for `make build pico` or `make pico`
-# It finds the first non-`build`/`clean`/`setup`/`help` target and uses it as the SKU
-SKU := $(or $(filter-out build clean setup help,$(MAKECMDGOALS)),pico)
+# It finds the first non-`build`/`clean`/`setup-ci`/`help` target and uses it as the SKU
+SKU := $(or $(filter-out build clean setup-ci help,$(MAKECMDGOALS)),pico)
 SKU := $(firstword $(SKU))
 
 # Map SKU to board name
@@ -13,7 +13,7 @@ else ifeq ($(SKU), pico2)
   BOARD = rpipico2
 endif
 
-.PHONY: all build setup clean help pico pico2
+.PHONY: all build setup-ci clean help pico pico2
 
 # Default goal
 .DEFAULT_GOAL := help
@@ -36,17 +36,17 @@ help:
 	@echo "  make build pico2"
 	@echo ""
 	@echo "Other targets:"
-	@echo "  setup             Install and configure Arduino CLI and required cores."
+	@echo "  setup-ci          Install and configure Arduino CLI for CI environments."
 	@echo "  clean             Remove build artifacts."
 	@echo "  help              Show this help message."
 
-setup:
-	@echo "--- Setting up Arduino environment ---"
+setup-ci:
+	@echo "--- Setting up Arduino environment for CI ---"
 	arduino-cli config init
 	arduino-cli config set board_manager.additional_urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
 	arduino-cli core update-index
 	arduino-cli core install rp2040:rp2040@4.6.1
-	@echo "--- Setup complete ---"
+	@echo "--- CI setup complete ---"
 
 build:
 ifeq ($(filter pico pico2,$(SKU)),)

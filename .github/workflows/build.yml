@@ -14,7 +14,7 @@ jobs:
         uses: arduino/setup-arduino-cli@v2
 
       - name: Configure build environment
-        run: make setup
+        run: make setup-ci
 
       - name: Compile firmware
         run: make build ${{ matrix.sku }}
