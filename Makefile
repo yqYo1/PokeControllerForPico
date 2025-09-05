@@ -13,7 +13,7 @@ else ifeq ($(SKU), pico2)
   BOARD = rpipico2
 endif
 
-.PHONY: all build setup-ci clean help pico pico2
+.PHONY: build setup-ci clean help pico pico2
 
 # Default goal
 .DEFAULT_GOAL := help
