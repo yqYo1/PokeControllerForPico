@@ -21,7 +21,7 @@
 ## ソフトウェアのダウンロード
 
 このリポジトリの[Releasesページ](https://github.com/yqYo1/PokeControllerForPico/releases)からボードに対応するuf2ファイルをダウンロードする
-- Picoの場合は末尾が`rpipico.uf2`を、Picoの場合は末尾が`rpipico2.uf2`のファイルをダウンロードする
+- Picoの場合は`PokeControllerForPico-pico.uf2`を、Pico2の場合は`PokeControllerForPico-pico2.uf2`のファイルをダウンロードする
 
 ## 書き込み
 
