@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arduino.h"
+#include <cstdint>
 #include "tusb.h"
 #include "usb_descriptors.h"
 #include "CustomKeyboard.h"
@@ -76,7 +76,7 @@ const typedef enum {
 
 typedef struct
 {
-  byte command;
+  uint8_t command;
   int duration;
   int waittime;
 } SetCommand;
@@ -331,7 +331,6 @@ const int changetheyear_size = (int)(sizeof(changetheyear_commands) / sizeof(Set
 
 extern int ProgState;
 
-void Serial1_Init(void);
 void Controller_Init(void);
 void Controller_Reset(void);
 void Keyboard_Init(void);

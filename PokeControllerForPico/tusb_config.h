@@ -35,11 +35,6 @@ extern "C" {
 // COMMON CONFIGURATION
 //--------------------------------------------------------------------
 
-#ifdef ARDUINO_FQBN
-#pragma message("Compiling for FQBN -> " ARDUINO_FQBN)
-#else
-#pragma message("Warning: ARDUINO_FQBN macro not defined.")
-#endif
 #ifndef CFG_TUSB_MCU
 #define CFG_TUSB_MCU OPT_MCU_RP2040
 #endif
