@@ -1,4 +1,5 @@
 #include "CustomKeyboard.h"
+#include "pico/time.h"
 
 typedef struct
 {
@@ -167,18 +168,18 @@ void key_releaseAll(void)
 size_t key_write(uint8_t c)
 {
 	uint8_t p = key_press(c);
-	delay(30);
+	sleep_ms(30);
 	key_release(c);
-	delay(30);
+	sleep_ms(30);
 	return p;
 }
 
 size_t specialkey_write(uint8_t c)
 {
 	uint8_t p = specialkey_press(c);
-	delay(30);
+	sleep_ms(30);
 	specialkey_release(c);
-	delay(30);
+	sleep_ms(30);
 	return p;
 }
 

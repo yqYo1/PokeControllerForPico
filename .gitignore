@@ -22,3 +22,8 @@
 !/PokeControllerForPico/.ino
 !/PokeControllerForPico/.c
 !/PokeControllerForPico/.cpp
+
+# Build artifacts
+/build/
+*.uf2
+pico_sdk_import.cmake

@@ -1,4 +1,8 @@
 #include "PokeControllerForPico_Func.h"
+#include "pico/stdlib.h"
+#include "pico/time.h"
+#include <stdio.h>
+#include <string.h>
 
 #define YEAR_MAX 60
 
@@ -96,12 +100,6 @@ void Type_string(char* str);
 void Type_stringBySerialCommunication(void);
 void sendReportOnly(USB_JoystickReport_Input_t report);
 
-void Serial1_Init(void)
-{
-  Serial1.begin(9600);
-  while (!Serial1);
-}
-
 void Controller_Init(void)
 {
   tusb_init();
@@ -114,7 +112,7 @@ void Controller_Reset(void)
   for (int i = 0; i < 5; i++)
   {
     sendReportOnly(pc_report);//解析したデータをSwitchに送信
-    delay(40);
+    sleep_ms(40);
   }
 }
 
@@ -313,24 +311,24 @@ void GetNextReportFromCommands(const SetCommand* commands, const int step_size)
     memcpy(&last_pc_report, &pc_report,  sizeof(USB_JoystickReport_Input_t));
     ApplyButtonCommand(commands, pc_report);
     sendReportOnly(pc_report);//解析したデータをSwitchに送信
-    s_ultime = millis();
+    s_ultime = to_ms_since_boot(get_absolute_time());
     blduration = true;
     blwaittime = true;
     return;
   }
   else if ((blduration == true) && (blwaittime == true))
   {
-    if (millis() - s_ultime > commands[cnt_command].duration)
+    if (to_ms_since_boot(get_absolute_time()) - s_ultime > commands[cnt_command].duration)
     {
       sendReportOnly(last_pc_report);//解析したデータをSwitchに送信
-      s_ultime = millis();
+      s_ultime = to_ms_since_boot(get_absolute_time());
       blduration = false;
     }
     return;
   }
   else
   {
-    if (millis() - s_ultime > commands[cnt_command].waittime)
+    if (to_ms_since_boot(get_absolute_time()) - s_ultime > commands[cnt_command].waittime)
     {
 
       memcpy(&pc_report, &last_pc_report, sizeof(USB_JoystickReport_Input_t));
@@ -352,24 +350,24 @@ void GetNextReportFromCommandsforChangeTheDate(const SetCommand* commands, const
     memcpy(&last_pc_report, &pc_report,  sizeof(USB_JoystickReport_Input_t));
     ApplyButtonCommand(commands, pc_report);
     sendReportOnly(pc_report);//解析したデータをSwitchに送信
-    s_ultime = millis();
+    s_ultime = to_ms_since_boot(get_absolute_time());
     blduration = true;
     blwaittime = true;
     return;
   }
   else if ((blduration == true) && (blwaittime == true))
   {
-    if (millis() - s_ultime > commands[cnt_command].duration)
+    if (to_ms_since_boot(get_absolute_time()) - s_ultime > commands[cnt_command].duration)
     {
       sendReportOnly(last_pc_report);//解析したデータをSwitchに送信
-      s_ultime = millis();
+      s_ultime = to_ms_since_boot(get_absolute_time());
       blduration = false;
     }
     return;
   }
   else
   {
-    if (millis() - s_ultime > commands[cnt_command].waittime)
+    if (to_ms_since_boot(get_absolute_time()) - s_ultime > commands[cnt_command].waittime)
     {
       memcpy(&pc_report, &last_pc_report, sizeof(USB_JoystickReport_Input_t));
       cnt_command++;
@@ -438,24 +436,24 @@ void GetNextReportFromCommandsforChangeTheYear(const SetCommand* commands, const
     memcpy(&last_pc_report, &pc_report,  sizeof(USB_JoystickReport_Input_t));
     ApplyButtonCommand(commands, pc_report);
     sendReportOnly(pc_report);//解析したデータをSwitchに送信
-    s_ultime = millis();
+    s_ultime = to_ms_since_boot(get_absolute_time());
     blduration = true;
     blwaittime = true;
     return;
   }
   else if ((blduration == true) && (blwaittime == true))
   {
-    if (millis() - s_ultime > commands[cnt_command].duration)
+    if (to_ms_since_boot(get_absolute_time()) - s_ultime > commands[cnt_command].duration)
     {
       sendReportOnly(last_pc_report);//解析したデータをSwitchに送信
-      s_ultime = millis();
+      s_ultime = to_ms_since_boot(get_absolute_time());
       blduration = false;
     }
     return;
   }
   else
   {
-    if (millis() - s_ultime > commands[cnt_command].waittime)
+    if (to_ms_since_boot(get_absolute_time()) - s_ultime > commands[cnt_command].waittime)
     {
 
       memcpy(&pc_report, &last_pc_report, sizeof(USB_JoystickReport_Input_t));
@@ -500,7 +498,7 @@ void GetNextReportFromCommandsforChangeTheYear(const SetCommand* commands, const
 
 USB_JoystickReport_Input_t ApplyButtonCommand(const SetCommand* commands, USB_JoystickReport_Input_t ReportData)
 {
-  byte button = commands[cnt_command].command;
+  uint8_t button = commands[cnt_command].command;
   switch (button)
   {
     case COMMAND_UP:
@@ -733,7 +731,7 @@ void Type_stringBySerialCommunication(void)
   Type_string(chrread);
   ResetDirections();
   sendReportOnly(pc_report);//解析したデータをSwitchに送信
-  delay(40);
+  sleep_ms(40);
 }
 
 void sendReportOnly(USB_JoystickReport_Input_t report)
