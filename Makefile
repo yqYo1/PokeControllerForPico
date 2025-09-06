@@ -5,12 +5,19 @@
 # export PICO_SDK_PATH=/path/to/pico-sdk
 # PICO_SDK_PATH ?= ../../pico-sdk
 
+# This allows for `make build pico` or `make pico`
+# It finds the first non-`build`/`clean`/`help` target and uses it as the SKU
+SKU := $(or $(filter-out build clean help,$(MAKECMDGOALS)),pico)
+SKU := $(firstword $(SKU))
+
 # Name of the build directory
 BUILD_DIR = build
 
 # Name of the final artifact
 TARGET = PokeControllerForPico
 TARGET_UF2 = $(TARGET).uf2
+SKU_TARGET_UF2 = $(TARGET)-$(SKU).uf2
+
 
 # --- Targets ---
 .PHONY: all build clean help pico pico2
@@ -43,12 +50,12 @@ build:
 	@echo "--- Building firmware with make ---"
 	$(MAKE) -C $(BUILD_DIR)
 	@echo "--- Copying artifact ---"
-	cp $(BUILD_DIR)/$(TARGET_UF2) .
-	@echo "--- Build successful: ./$(TARGET_UF2) ---"
+	cp $(BUILD_DIR)/$(TARGET_UF2) ./$(SKU_TARGET_UF2)
+	@echo "--- Build successful: ./$(SKU_TARGET_UF2) ---"
 
 
 clean:
 	@echo "--- Cleaning build artifacts ---"
 	rm -rf $(BUILD_DIR)
-	rm -f $(TARGET_UF2)
+	rm -f $(TARGET)-*.uf2
 	@echo "--- Clean complete ---"
