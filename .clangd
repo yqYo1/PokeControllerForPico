@@ -1,12 +1,6 @@
-# .clangd
+# .clangd configuration for CMake projects
+# This tells clangd to find compile commands in the 'build' directory.
+# Ensure you run 'cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ..' in your build directory first.
+
 CompileFlags:
-  Add:
-    - -std=gnu++17
-    - -DUSBD_DESC_USER_SUPPLIED
-    - -DARDUINO_FQBN
-
-    # Arduino Picoコアライブラリへのインクルードパス
-    - -I/home/yayoi/.arduino15/packages/rp2040/hardware/rp2040/4.6.1/cores/rp2040
-
-    # Raspberry Pi Picoのボード定義（バリアント）へのインクルードパス
-    - -I/home/yayoi/.arduino15/packages/rp2040/hardware/rp2040/4.6.1/variants/rpipico
+  CompilationDatabase: build/
