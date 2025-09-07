@@ -21,6 +21,6 @@
 !/pico_sdk_import.cmake
 !/PokeControllerForPico/
 /PokeControllerForPico/*
-!/PokeControllerForPico/.h
-!/PokeControllerForPico/.c
-!/PokeControllerForPico/.cpp
+!/PokeControllerForPico/*.h
+!/PokeControllerForPico/*.c
+!/PokeControllerForPico/*.cpp
