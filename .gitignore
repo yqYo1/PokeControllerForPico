@@ -14,16 +14,13 @@
 !/.gitignore
 !/LICENSE
 !/README.md
+!/AGENTS.md
 !/Makefile
 !/.clangd
+!/CMakeLists.txt
+!/pico_sdk_import.cmake
 !/PokeControllerForPico/
 /PokeControllerForPico/*
 !/PokeControllerForPico/.h
-!/PokeControllerForPico/.ino
 !/PokeControllerForPico/.c
 !/PokeControllerForPico/.cpp
-
-# Build artifacts
-/build/
-*.uf2
-pico_sdk_import.cmake
