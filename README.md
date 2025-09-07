@@ -16,30 +16,39 @@
 - PicoとUSB-Serial変換器を接続用のジャンパ線等
     - Raspberry Pi Pico Hなどの名前で売られている半田付け済のモデルを購入しない場合、自前で半田付けする必要がある
 
-# 使い方
+# 使い方 (How to Use)
 
-## ソフトウェアのダウンロード
+## 1. ハードウェアの準備 (Hardware Setup)
 
-このリポジトリの[Releasesページ](https://github.com/yqYo1/PokeControllerForPico/releases)からボードに対応するuf2ファイルをダウンロードする
-- Picoの場合は`PokeControllerForPico-pico.uf2`を、Pico2の場合は`PokeControllerForPico-pico2.uf2`のファイルをダウンロードする
+**接続図 (Wiring Diagram):**
 
-## 書き込み
+| Raspberry Pi Pico |      | USB-Serial変換器 (USB-Serial Converter) |
+| :---------------- | :--- | :------------------------------------- |
+| 1番ピン (GP0/TX)  | ↔    | RX                                     |
+| 2番ピン (GP1/RX)  | ↔    | TX                                     |
+| 3番ピン (GND)     | ↔    | GND                                    |
 
-1. PicoのBOOT SELボタンを押しながらPCと接続
-2. Picoがストレージとして認識されるのでファイラーで開く
-3. ダウンロードしたuf2ファイルをフォルダにコピーする
-4. 書き込みが終わったら、Raspberry Pi PicoとSwitchを接続
-5. Raspberry Pi PicoとUSB-Serial変換器を接続する
+上記のように、Raspberry Pi PicoとUSB-Serial変換器をジャンパー線で接続します。
 
-~~~
-Raspberry Pi Pico 1番ピン(UART0TX) <-------> USB-Serial変換器 RX
-Raspberry Pi Pico 2番ピン(UART0RX) <-------> USB-Serial変換器 TX
-Raspberry Pi Pico 3番ピン(GND)     <-------> USB-Serial変換器 GND
-~~~
+## 2. ファームウェアの書き込み (Flashing the Firmware)
 
-6. USB-Serial変換器をPCと接続
+1.  **ファームウェアをダウンロードします。**
+    このリポジトリの[Releasesページ](https://github.com/yqYo1/PokeControllerForPico/releases)から、お使いのボードに対応する `.uf2` ファイルをダウンロードします。
+    -   Pico: `PokeControllerForPico-pico.uf2`
+    -   Pico2: `PokeControllerForPico-pico2.uf2`
 
-Poke Controller側のCOM Port番号をUSB-Serial変換器のものに合わせてSwitch Controller Simulatorなどでボタンを押して動作確認してください
+2.  **PicoをBOOTSELモードでPCに接続します。**
+    Picoの「BOOTSEL」ボタンを押しながら、PCにUSBケーブルで接続します。
+
+3.  **ファームウェアをコピーします。**
+    Picoが「RPI-RP2」という名前のUSBストレージとしてPCに認識されます。ダウンロードした `.uf2` ファイルを、そのストレージにドラッグ＆ドロップでコピーします。コピーが完了すると、Picoは自動的に再起動します。
+
+## 3. 接続と動作確認 (Connection and Verification)
+
+1.  書き込みが終わったら、Raspberry Pi PicoをNintendo Switchに接続します。
+2.  USB-Serial変換器をPCに接続します。
+3.  Poke Controller側のシリアルポート設定を、PCに接続したUSB-Serial変換器のCOMポート番号に合わせます。
+4.  Switch Controller Simulatorなどでボタンを押し、Switch上でコントローラーとして認識・動作することを確認してください。
 
 # 開発者向け(Building from Source)
 
@@ -66,7 +75,7 @@ sudo apt-get update && sudo apt-get install -y git cmake make gcc-arm-none-eabi
    ```
 
 2. **Pico SDKをクローンします。**
-   このプロジェクトは特定のバージョンのPico SDKに依存しています。CIではバージョン `2.2.0` を使用しています。
+   CI(継続的インテグレーション)ではPico SDKのバージョン `2.2.0` を使用してビルドしています。異なるバージョンでも動作する可能性がありますが、予期せぬ問題を防ぐため、同じバージョンを使用することを推奨します。
    ```bash
    # プロジェクトと同じ階層にSDKをクローンする場合
    git clone --branch 2.2.0 --depth 1 https://github.com/raspberrypi/pico-sdk.git ../pico-sdk
