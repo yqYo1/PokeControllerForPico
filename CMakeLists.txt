@@ -5,6 +5,9 @@ include(pico_sdk_import.cmake)
 
 project(PokeControllerForPico C CXX ASM)
 
+# Export compile commands for clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
