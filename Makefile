@@ -49,13 +49,12 @@ build:
 	cmake -B $(BUILD_DIR) -S .
 	@echo "--- Building firmware with make ---"
 	$(MAKE) -C $(BUILD_DIR)
-	@echo "--- Copying artifact ---"
-	cp $(BUILD_DIR)/$(TARGET_UF2) ./$(SKU_TARGET_UF2)
-	@echo "--- Build successful: ./$(SKU_TARGET_UF2) ---"
+	@echo "--- Renaming artifact ---"
+	mv $(BUILD_DIR)/$(TARGET_UF2) $(BUILD_DIR)/$(SKU_TARGET_UF2)
+	@echo "--- Build successful: $(BUILD_DIR)/$(SKU_TARGET_UF2) ---"
 
 
 clean:
 	@echo "--- Cleaning build artifacts ---"
 	rm -rf $(BUILD_DIR)
-	rm -f $(TARGET)-*.uf2
 	@echo "--- Clean complete ---"
