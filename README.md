@@ -104,7 +104,7 @@ sudo apt-get update && sudo apt-get install -y git cmake make gcc-arm-none-eabi
    # Raspberry Pi Pico 2向けにビルド
    make pico2
    ```
-   ビルドが成功すると、リポジトリのルートに `.uf2` ファイル (例: `PokeControllerForPico-pico.uf2`) が生成されます。
+   ビルドが成功すると、`build/` ディレクトリ内に `.uf2` ファイル (例: `PokeControllerForPico-pico.uf2`) が生成されます。
 
 # Lisence
 
