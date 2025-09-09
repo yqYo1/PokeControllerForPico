@@ -62,4 +62,4 @@ To build the firmware, follow these steps:
     ```bash
     make build
     ```
-    This will create the `.uf2` file in the root directory, named according to the SKU (e.g., `PokeControllerForPico-pico.uf2`).
+    This will create the `.uf2` file inside the `build/` directory, named according to the SKU (e.g., `PokeControllerForPico-pico.uf2`).
