@@ -4,17 +4,13 @@ This document contains important information for AI agents working on this repos
 
 ## 1. Critical: .gitignore Configuration
 
-This repository uses a non-standard `.gitignore` configuration that **ignores all files by default**.
+This repository uses a non-standard `.gitignore` configuration that **ignores all files by default**, and then explicitly un-ignores the necessary ones using the `!` prefix.
 
-The pattern is:
-1.  Ignore everything with `/*` and `/**`.
-2.  Explicitly un-ignore files and directories that should be tracked by git using the `!` prefix.
+The configuration has been set up to use wildcards for the `src` directory (e.g., `!/src/*.c`, `!/src/*.h`). This means that any new source files with standard extensions that you add to the `src` directory will be **automatically tracked** by Git.
 
-**ACTION REQUIRED:** If you add or rename a file that needs to be tracked by Git, you **MUST** add a corresponding entry to the `.gitignore` file to un-ignore it.
+You generally **do not** need to edit the `.gitignore` file when adding new source files to the `src` directory.
 
-For example, to track a new file `src/new_feature.c`, you would need to add `!/src/new_feature.c` to `.gitignore`.
-
-Failure to do this will result in the file not being included in commits, which will break the CI/CD pipeline and cause confusion.
+However, if you add a new file or directory at the **root level** of the repository, or a file with a new extension, you **MUST** add a corresponding entry to the `.gitignore` file to un-ignore it (e.g., `!/new_directory/` or `!/new_file.txt`).
 
 ## 2. Building the Project (Pico SDK)
 
