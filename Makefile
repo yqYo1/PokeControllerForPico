@@ -43,6 +43,10 @@ help:
 
 
 build:
+	@if [ -z "$(PICO_SDK_PATH)" ]; then \
+		echo "Error: PICO_SDK_PATH is not set. Please set it to your Pico SDK directory." >&2; \
+		exit 1; \
+	fi
 	@echo "--- Configuring build with CMake ---"
 	mkdir -p $(BUILD_DIR)
 	@echo "PICO_SDK_PATH is $(PICO_SDK_PATH)"
