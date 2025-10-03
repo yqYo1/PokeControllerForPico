@@ -69,10 +69,21 @@ extern "C" {
 
 //------------- CLASS -------------//
 #define CFG_TUD_HID 2
-#define CFG_TUD_CDC 0
+#ifdef USE_USB_CDC
+  #define CFG_TUD_CDC 1
+#else
+  #define CFG_TUD_CDC 0
+#endif
 #define CFG_TUD_MSC 0
 #define CFG_TUD_MIDI 0
 #define CFG_TUD_VENDOR 0
+
+//------------- CDC -------------//
+#ifdef USE_USB_CDC
+// CDC buffer size
+#define CFG_TUD_CDC_RX_BUFSIZE   (64)
+#define CFG_TUD_CDC_TX_BUFSIZE   (64)
+#endif
 
 // HID buffer size Should be sufficient to hold ID (if any) + Data
 #define CFG_TUD_HID_EP_BUFSIZE (64)
