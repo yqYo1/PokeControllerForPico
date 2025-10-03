@@ -10,6 +10,13 @@
 SKU := $(or $(filter-out build clean help,$(MAKECMDGOALS)),pico)
 SKU := $(firstword $(SKU))
 
+# Map SKU to board name
+ifeq ($(SKU), pico)
+  BOARD = rpipico
+else ifeq ($(SKU), pico2)
+  BOARD = rpipico2
+endif
+
 # Name of the build directory
 BUILD_DIR = build
 
@@ -50,7 +57,7 @@ build:
 	@echo "--- Configuring build with CMake ---"
 	mkdir -p $(BUILD_DIR)
 	@echo "PICO_SDK_PATH is $(PICO_SDK_PATH)"
-	cmake -B $(BUILD_DIR) -S .
+	cmake -B $(BUILD_DIR) -S . -DPICO_BOARD=$(BOARD)
 	@echo "--- Building firmware with make ---"
 	$(MAKE) -C $(BUILD_DIR)
 	@echo "--- Renaming artifact ---"
