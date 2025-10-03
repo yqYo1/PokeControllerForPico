@@ -12,9 +12,9 @@ SKU := $(firstword $(SKU))
 
 # Map SKU to board name
 ifeq ($(SKU), pico)
-  BOARD = rpipico
+  BOARD = pico
 else ifeq ($(SKU), pico2)
-  BOARD = rpipico2
+  BOARD = pico2
 endif
 
 # Name of the build directory
