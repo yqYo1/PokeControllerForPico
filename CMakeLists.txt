@@ -41,6 +41,11 @@ target_compile_definitions(PokeControllerForPico INTERFACE
     TUSB_CONFIG_FILE='${CMAKE_CURRENT_LIST_DIR}/src/tusb_config.h'
 )
 
+# Conditionally enable USB CDC for the new board
+if (PICO_BOARD STREQUAL "waveshare_rp2350_usb_a")
+    target_compile_definitions(PokeControllerForPico PUBLIC USE_USB_CDC)
+endif()
+
 
 # Create .uf2 file
 pico_add_extra_outputs(PokeControllerForPico)
