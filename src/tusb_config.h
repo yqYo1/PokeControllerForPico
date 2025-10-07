@@ -83,6 +83,10 @@ extern "C" {
 // CDC buffer size
 #define CFG_TUD_CDC_RX_BUFSIZE   (64)
 #define CFG_TUD_CDC_TX_BUFSIZE   (64)
+
+// CDC Endpoint buffer size
+// Note: TUD_CDC_DESCRIPTOR macro uses CFG_TUD_CDC_EP_BUFSIZE
+#define CFG_TUD_CDC_EP_BUFSIZE   (64)
 #endif
 
 // HID buffer size Should be sufficient to hold ID (if any) + Data
