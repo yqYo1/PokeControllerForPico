@@ -12,6 +12,8 @@
 
 
 !/.gitignore
+!/.gitmodules
+!/lib/
 !/LICENSE
 !/README.md
 !/AGENTS.md

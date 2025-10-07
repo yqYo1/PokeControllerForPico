@@ -27,21 +27,10 @@
 
 #include "tusb.h"
 
-#ifdef USE_USB_CDC
-enum
-{
-  ITF_NUM_HID1,
-  ITF_NUM_HID2,
-  ITF_NUM_CDC,
-  ITF_NUM_CDC_DATA,
-  ITF_NUM_TOTAL
-};
-#else
 enum
 {
   ITF_NUM_HID1,  // gamepad
   ITF_NUM_HID2,  // keyboard
   ITF_NUM_TOTAL
 };
-#endif
 
