@@ -103,8 +103,8 @@ void core1_main() {
   static pio_usb_configuration_t config = PIO_USB_DEFAULT_CONFIG;
   config.pin_dp = PIO_USB_DP_PIN;
 
-  init_string_desc(); // Correctly initialize string descriptors
-  usb_device = pio_usb_device_init(&config, &pio_desc_buffers);
+  init_string_desc();
+  pio_usb_device = pio_usb_device_init(&config, &pio_desc_buffers);
 
   while (true) {
     pio_usb_device_task();
@@ -124,9 +124,8 @@ int main(void) {
   while (true) {
     if (pio_usb_device != NULL) {
       hid_mouse_report_t mouse_report = {0};
-      mouse_report.x = 5; // Move mouse slightly
-      // Use the correct endpoint index (1 for the mouse)
-      endpoint_t *ep = pio_usb_get_endpoint(pio_usb_device, 1);
+      mouse_report.x = 5;
+      endpoint_t *ep = pio_usb_get_endpoint(pio_usb_device, EPNUM_MOUSE & 0x7f);
       if (ep) {
         pio_usb_set_out_data(ep, (uint8_t *)&mouse_report, sizeof(mouse_report));
       }
