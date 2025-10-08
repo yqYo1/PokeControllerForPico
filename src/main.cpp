@@ -13,7 +13,7 @@
 #endif
 
 #ifdef USE_PIO_USB_TEST_ONLY
-// --- Standalone PIO USB CDC Echo Test ---
+// --- Standalone PIO USB CDC Echo Test (v2) ---
 
 // Correct GPIO pins for the Waveshare RP2350-USB-A board
 #define PIO_USB_DP_PIN 12
@@ -27,14 +27,14 @@
 #define EPNUM_CDC_OUT   0x02
 #define EPNUM_CDC_IN    0x82
 
-// Device Descriptor
+// Device Descriptor for a composite device with IAD
 static tusb_desc_device_t const desc_device = {
     .bLength         = sizeof(tusb_desc_device_t),
     .bDescriptorType = TUSB_DESC_DEVICE,
-    .bcdUSB          = 0x0110,
-    .bDeviceClass    = TUSB_CLASS_CDC,
-    .bDeviceSubClass = 0x00,
-    .bDeviceProtocol = 0x00,
+    .bcdUSB          = 0x0200,
+    .bDeviceClass    = TUSB_CLASS_MISC,
+    .bDeviceSubClass = MISC_SUBCLASS_COMMON,
+    .bDeviceProtocol = MISC_PROTOCOL_IAD,
     .bMaxPacketSize0 = 64,
     .idVendor        = PIO_USB_VID,
     .idProduct       = PIO_USB_PID,
@@ -56,7 +56,7 @@ static uint8_t const desc_cfg[] = {
 static const char* string_desc_arr[] = {
     [0] = (const char[]){0x09, 0x04},
     [1] = "Pico PIO USB",
-    [2] = "PIO CDC Serial Test (Correct Pins)",
+    [2] = "PIO CDC Serial Test",
     [3] = "1234-TEST"
 };
 
@@ -73,12 +73,10 @@ static usb_descriptor_buffers_t pio_desc_buffers = {
 int main(void) {
   set_sys_clock_khz(120000, true);
   stdio_init_all();
-  printf("--- PIO USB CDC Echo Test (Correct Pins) ---\n");
+  printf("--- PIO USB CDC Echo Test (v2 - Correct Descriptors & Logic) ---\n");
 
-  // Manually enable the D+ pull-up resistor on the correct pin.
   gpio_pull_up(PIO_USB_DP_PIN);
 
-  // Initialize the PIO USB stack with the correct pin configuration
   static pio_usb_configuration_t pio_cfg = PIO_USB_DEFAULT_CONFIG;
   pio_cfg.pin_dp = PIO_USB_DP_PIN;
   pio_usb_device = pio_usb_device_init(&pio_cfg, &pio_desc_buffers);
@@ -88,14 +86,17 @@ int main(void) {
     pio_usb_device_task();
 
     endpoint_t* ep_out = pio_usb_get_endpoint(pio_usb_device, EPNUM_CDC_OUT);
-    uint8_t rx_buf[64];
-    int len = pio_usb_get_in_data(ep_out, rx_buf, sizeof(rx_buf));
 
-    if (len > 0) {
-      printf("Received %d bytes\n", len);
-      // Echo back the received data
-      endpoint_t* ep_in = pio_usb_get_endpoint(pio_usb_device, EPNUM_CDC_IN);
-      pio_usb_set_out_data(ep_in, rx_buf, len);
+    // Check the correct flag for new data
+    if (ep_out && ep_out->new_data_flag) {
+      uint8_t rx_buf[64];
+      int len = pio_usb_get_in_data(ep_out, rx_buf, sizeof(rx_buf));
+
+      if (len > 0) {
+        printf("Received %d bytes\n", len);
+        endpoint_t* ep_in = pio_usb_get_endpoint(pio_usb_device, EPNUM_CDC_IN);
+        pio_usb_set_out_data(ep_in, rx_buf, len);
+      }
     }
   }
   return 0;
