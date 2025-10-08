@@ -31,23 +31,23 @@ target_include_directories(PokeControllerForPico PUBLIC
 target_link_libraries(PokeControllerForPico PRIVATE
     pico_stdlib
     hardware_uart
+    hardware_clocks
 )
 
-# Link to TinyUSB
-# The "tinyusb_device" target is created by the Pico SDK
-# It requires a tusb_config.h file. We point it to ours.
+# Link TinyUSB for all builds to make headers available
 target_link_libraries(PokeControllerForPico PRIVATE tinyusb_device)
-target_compile_definitions(PokeControllerForPico INTERFACE
-    TUSB_CONFIG_FILE='${CMAKE_CURRENT_LIST_DIR}/src/tusb_config.h'
-)
 
-# Conditionally add and link PIO USB for the dual device build
+# For the waveshare board, add PIO USB and define the test flag
 if (PICO_BOARD STREQUAL "waveshare_rp2350_usb_a")
-    target_compile_definitions(PokeControllerForPico PUBLIC USE_DUAL_USB_DEVICE)
+    target_compile_definitions(PokeControllerForPico PUBLIC USE_PIO_USB_TEST_ONLY)
     add_subdirectory(lib/Pico-PIO-USB)
     target_link_libraries(PokeControllerForPico PRIVATE pico_pio_usb)
 endif()
 
+# Common TinyUSB configuration for descriptor headers
+target_compile_definitions(PokeControllerForPico INTERFACE
+    TUSB_CONFIG_FILE='${CMAKE_CURRENT_LIST_DIR}/src/tusb_config.h'
+)
 
 # Create .uf2 file
 pico_add_extra_outputs(PokeControllerForPico)
