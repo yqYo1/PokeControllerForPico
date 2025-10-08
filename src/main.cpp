@@ -13,9 +13,10 @@
 #endif
 
 #ifdef USE_PIO_USB_TEST_ONLY
-// --- Standalone PIO USB HID Mouse Test ---
+// --- Standalone PIO USB HID Mouse Test (Correct Pins) ---
 
 // Correct GPIO pins for the Waveshare RP2350-USB-A board
+// D+ = GP12, D- = GP13
 #define PIO_USB_DP_PIN 12
 
 // --- USB Descriptors for a simple HID Mouse ---
@@ -52,8 +53,8 @@ static uint8_t const desc_cfg[] = {
 static const char* string_desc_arr[] = {
     [0] = (const char[]){0x09, 0x04},
     [1] = "Pico PIO USB",
-    [2] = "PIO HID Mouse Test",
-    [3] = "1234-HID"
+    [2] = "PIO HID Mouse Test (Correct Pins)",
+    [3] = "1234-HID-CORRECT"
 };
 
 // --- PIO USB Device Initialization ---
@@ -69,10 +70,13 @@ static usb_descriptor_buffers_t pio_desc_buffers = {
 int main(void) {
   set_sys_clock_khz(120000, true);
   stdio_init_all();
-  printf("--- PIO USB HID Mouse Test ---\n");
+  printf("--- PIO USB HID Mouse Test (Correct Pins: D+=GP12) ---\n");
 
+  // Manually enable the D+ pull-up resistor on the correct pin.
   gpio_pull_up(PIO_USB_DP_PIN);
 
+  // Initialize the PIO USB stack with the correct pin configuration.
+  // The library default is DPDM (DM = DP+1), so setting DP to 12 automatically sets DM to 13.
   static pio_usb_configuration_t pio_cfg = PIO_USB_DEFAULT_CONFIG;
   pio_cfg.pin_dp = PIO_USB_DP_PIN;
   pio_usb_device = pio_usb_device_init(&pio_cfg, &pio_desc_buffers);
