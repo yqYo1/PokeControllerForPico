@@ -13,31 +13,23 @@
 #endif
 
 #ifdef USE_PIO_USB_TEST_ONLY
-// --- Standalone PIO USB CDC Echo Test (v2) ---
+// --- Standalone PIO USB HID Mouse Test ---
 
 // Correct GPIO pins for the Waveshare RP2350-USB-A board
 #define PIO_USB_DP_PIN 12
 
-// Manually define descriptor constants to avoid conflicts
-#define PIO_USB_VID   0x2E8A // Raspberry Pi
-#define PIO_USB_PID   0x000a // Raspberry Pi Pico SDK CDC
-
-// CDC Descriptor definitions
-#define EPNUM_CDC_NOTIF 0x81
-#define EPNUM_CDC_OUT   0x02
-#define EPNUM_CDC_IN    0x82
-
-// Device Descriptor for a composite device with IAD
+// --- USB Descriptors for a simple HID Mouse ---
+// Device Descriptor
 static tusb_desc_device_t const desc_device = {
     .bLength         = sizeof(tusb_desc_device_t),
     .bDescriptorType = TUSB_DESC_DEVICE,
-    .bcdUSB          = 0x0200,
-    .bDeviceClass    = TUSB_CLASS_MISC,
-    .bDeviceSubClass = MISC_SUBCLASS_COMMON,
-    .bDeviceProtocol = MISC_PROTOCOL_IAD,
+    .bcdUSB          = 0x0110,
+    .bDeviceClass    = 0x00, // Device class specified in interface descriptor
+    .bDeviceSubClass = 0x00,
+    .bDeviceProtocol = 0x00,
     .bMaxPacketSize0 = 64,
-    .idVendor        = PIO_USB_VID,
-    .idProduct       = PIO_USB_PID,
+    .idVendor        = 0xCafe, // Test VID
+    .idProduct       = 0x4002, // Test PID for Mouse
     .bcdDevice       = 0x0100,
     .iManufacturer   = 0x01,
     .iProduct        = 0x02,
@@ -45,19 +37,23 @@ static tusb_desc_device_t const desc_device = {
     .bNumConfigurations = 0x01
 };
 
+// HID Report Descriptor
+static uint8_t const desc_hid_report[] = { TUD_HID_REPORT_DESC_MOUSE() };
+static const uint8_t* pio_hid_reports[] = { desc_hid_report };
+
 // Configuration Descriptor
-#define CONFIG_TOTAL_LEN (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN)
+#define CONFIG_TOTAL_LEN (TUD_CONFIG_DESC_LEN + TUD_HID_DESC_LEN)
 static uint8_t const desc_cfg[] = {
-    TUD_CONFIG_DESCRIPTOR(1, 2, 0, CONFIG_TOTAL_LEN, 0, 100),
-    TUD_CDC_DESCRIPTOR(0, 0, EPNUM_CDC_NOTIF, 8, EPNUM_CDC_OUT, EPNUM_CDC_IN, 64)
+    TUD_CONFIG_DESCRIPTOR(1, 1, 0, CONFIG_TOTAL_LEN, 0, 100),
+    TUD_HID_DESCRIPTOR(0, 0, 0, sizeof(desc_hid_report), 0x81, 16, 10)
 };
 
 // String Descriptors
 static const char* string_desc_arr[] = {
     [0] = (const char[]){0x09, 0x04},
     [1] = "Pico PIO USB",
-    [2] = "PIO CDC Serial Test",
-    [3] = "1234-TEST"
+    [2] = "PIO HID Mouse Test",
+    [3] = "1234-HID"
 };
 
 // --- PIO USB Device Initialization ---
@@ -66,14 +62,14 @@ static usb_device_t *pio_usb_device = NULL;
 static usb_descriptor_buffers_t pio_desc_buffers = {
     .device = (uint8_t*)&desc_device,
     .config = desc_cfg,
-    .hid_report = NULL,
+    .hid_report = pio_hid_reports,
     .string = (string_descriptor_t*)string_desc_arr,
 };
 
 int main(void) {
   set_sys_clock_khz(120000, true);
   stdio_init_all();
-  printf("--- PIO USB CDC Echo Test (v2 - Correct Descriptors & Logic) ---\n");
+  printf("--- PIO USB HID Mouse Test ---\n");
 
   gpio_pull_up(PIO_USB_DP_PIN);
 
@@ -81,22 +77,15 @@ int main(void) {
   pio_cfg.pin_dp = PIO_USB_DP_PIN;
   pio_usb_device = pio_usb_device_init(&pio_cfg, &pio_desc_buffers);
 
-  // Main echo loop
   while (true) {
     pio_usb_device_task();
+    sleep_ms(500);
 
-    endpoint_t* ep_out = pio_usb_get_endpoint(pio_usb_device, EPNUM_CDC_OUT);
-
-    // Check the correct flag for new data
-    if (ep_out && ep_out->new_data_flag) {
-      uint8_t rx_buf[64];
-      int len = pio_usb_get_in_data(ep_out, rx_buf, sizeof(rx_buf));
-
-      if (len > 0) {
-        printf("Received %d bytes\n", len);
-        endpoint_t* ep_in = pio_usb_get_endpoint(pio_usb_device, EPNUM_CDC_IN);
-        pio_usb_set_out_data(ep_in, rx_buf, len);
-      }
+    endpoint_t* ep = pio_usb_get_endpoint(pio_usb_device, 0x81);
+    if (ep) {
+        hid_mouse_report_t mouse_report = {0};
+        mouse_report.x = 5;
+        pio_usb_set_out_data(ep, (uint8_t*)&mouse_report, sizeof(mouse_report));
     }
   }
   return 0;
