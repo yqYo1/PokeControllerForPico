@@ -6,6 +6,7 @@
 #ifdef USE_PIO_USB_TEST_ONLY
 #include "pio_usb.h"
 #include "hardware/clocks.h"
+#include "hardware/gpio.h"
 #else
 #include "hardware/uart.h"
 #include "PokeControllerForPico_Func.h"
@@ -71,6 +72,9 @@ int main(void) {
   set_sys_clock_khz(120000, true);
   stdio_init_all();
   printf("--- PIO USB CDC Echo Test ---\n");
+
+  // Manually enable the D+ pull-up resistor. This is critical.
+  gpio_pull_up(PIO_USB_DP_PIN_DEFAULT);
 
   // Initialize the PIO USB stack in DEVICE mode
   static pio_usb_configuration_t pio_cfg = PIO_USB_DEFAULT_CONFIG;
