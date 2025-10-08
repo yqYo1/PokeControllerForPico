@@ -15,6 +15,9 @@
 #ifdef USE_PIO_USB_TEST_ONLY
 // --- Standalone PIO USB CDC Echo Test ---
 
+// Correct GPIO pins for the Waveshare RP2350-USB-A board
+#define PIO_USB_DP_PIN 12
+
 // Manually define descriptor constants to avoid conflicts
 #define PIO_USB_VID   0x2E8A // Raspberry Pi
 #define PIO_USB_PID   0x000a // Raspberry Pi Pico SDK CDC
@@ -51,9 +54,9 @@ static uint8_t const desc_cfg[] = {
 
 // String Descriptors
 static const char* string_desc_arr[] = {
-    [0] = (const char[]){0x09, 0x04}, // 0: is supported language is English (0x0409)
+    [0] = (const char[]){0x09, 0x04},
     [1] = "Pico PIO USB",
-    [2] = "PIO CDC Serial Test",
+    [2] = "PIO CDC Serial Test (Correct Pins)",
     [3] = "1234-TEST"
 };
 
@@ -68,16 +71,16 @@ static usb_descriptor_buffers_t pio_desc_buffers = {
 };
 
 int main(void) {
-  // Required for PIO USB
   set_sys_clock_khz(120000, true);
   stdio_init_all();
-  printf("--- PIO USB CDC Echo Test ---\n");
+  printf("--- PIO USB CDC Echo Test (Correct Pins) ---\n");
 
-  // Manually enable the D+ pull-up resistor. This is critical.
-  gpio_pull_up(PIO_USB_DP_PIN_DEFAULT);
+  // Manually enable the D+ pull-up resistor on the correct pin.
+  gpio_pull_up(PIO_USB_DP_PIN);
 
-  // Initialize the PIO USB stack in DEVICE mode
+  // Initialize the PIO USB stack with the correct pin configuration
   static pio_usb_configuration_t pio_cfg = PIO_USB_DEFAULT_CONFIG;
+  pio_cfg.pin_dp = PIO_USB_DP_PIN;
   pio_usb_device = pio_usb_device_init(&pio_cfg, &pio_desc_buffers);
 
   // Main echo loop
