@@ -7,30 +7,29 @@
 #include "pio_usb.h"
 #include "hardware/clocks.h"
 #include "hardware/gpio.h"
+#include "pico/multicore.h"
 #else
 #include "hardware/uart.h"
 #include "PokeControllerForPico_Func.h"
 #endif
 
 #ifdef USE_PIO_USB_TEST_ONLY
-// --- Standalone PIO USB HID Mouse Test (Correct Pins) ---
+// --- Standalone PIO USB HID Test (Based on Official Waveshare Example) ---
 
 // Correct GPIO pins for the Waveshare RP2350-USB-A board
-// D+ = GP12, D- = GP13
 #define PIO_USB_DP_PIN 12
 
-// --- USB Descriptors for a simple HID Mouse ---
-// Device Descriptor
+// --- USB Descriptors for a simple HID Mouse/Keyboard Device ---
 static tusb_desc_device_t const desc_device = {
     .bLength         = sizeof(tusb_desc_device_t),
     .bDescriptorType = TUSB_DESC_DEVICE,
     .bcdUSB          = 0x0110,
-    .bDeviceClass    = 0x00, // Device class specified in interface descriptor
+    .bDeviceClass    = 0x00,
     .bDeviceSubClass = 0x00,
     .bDeviceProtocol = 0x00,
     .bMaxPacketSize0 = 64,
-    .idVendor        = 0xCafe, // Test VID
-    .idProduct       = 0x4002, // Test PID for Mouse
+    .idVendor        = 0xCafe,
+    .idProduct       = 0x4003, // PID for HID Test
     .bcdDevice       = 0x0100,
     .iManufacturer   = 0x01,
     .iProduct        = 0x02,
@@ -38,59 +37,101 @@ static tusb_desc_device_t const desc_device = {
     .bNumConfigurations = 0x01
 };
 
-// HID Report Descriptor
-static uint8_t const desc_hid_report[] = { TUD_HID_REPORT_DESC_MOUSE() };
-static const uint8_t* pio_hid_reports[] = { desc_hid_report };
+enum {
+  ITF_NUM_KEYBOARD,
+  ITF_NUM_MOUSE,
+  ITF_NUM_TOTAL,
+};
 
-// Configuration Descriptor
-#define CONFIG_TOTAL_LEN (TUD_CONFIG_DESC_LEN + TUD_HID_DESC_LEN)
+enum {
+  EPNUM_KEYBOARD = 0x81,
+  EPNUM_MOUSE = 0x82,
+};
+
+static uint8_t const desc_hid_keyboard_report[] = { TUD_HID_REPORT_DESC_KEYBOARD() };
+static uint8_t const desc_hid_mouse_report[] = { TUD_HID_REPORT_DESC_MOUSE() };
+
+static const uint8_t* pio_hid_reports[] = { desc_hid_keyboard_report, desc_hid_mouse_report };
+
+#define CONFIG_TOTAL_LEN (TUD_CONFIG_DESC_LEN + 2*TUD_HID_DESC_LEN)
 static uint8_t const desc_cfg[] = {
-    TUD_CONFIG_DESCRIPTOR(1, 1, 0, CONFIG_TOTAL_LEN, 0, 100),
-    TUD_HID_DESCRIPTOR(0, 0, 0, sizeof(desc_hid_report), 0x81, 16, 10)
+    TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN, TUSB_DESC_CONFIG_ATT_REMOTE_WAKEUP, 100),
+    TUD_HID_DESCRIPTOR(ITF_NUM_KEYBOARD, 0, HID_ITF_PROTOCOL_KEYBOARD, sizeof(desc_hid_keyboard_report), EPNUM_KEYBOARD, CFG_TUD_HID_EP_BUFSIZE, 10),
+    TUD_HID_DESCRIPTOR(ITF_NUM_MOUSE, 0, HID_ITF_PROTOCOL_MOUSE, sizeof(desc_hid_mouse_report), EPNUM_MOUSE, CFG_TUD_HID_EP_BUFSIZE, 10),
 };
 
-// String Descriptors
-static const char* string_desc_arr[] = {
+static const char* string_descriptors_base[] = {
     [0] = (const char[]){0x09, 0x04},
-    [1] = "Pico PIO USB",
-    [2] = "PIO HID Mouse Test (Correct Pins)",
-    [3] = "1234-HID-CORRECT"
+    [1] = "PIO USB HID Test",
+    [2] = "Keyboard and Mouse",
+    [3] = "1234-HID-WAVESHARE"
 };
 
-// --- PIO USB Device Initialization ---
-static usb_device_t *pio_usb_device = NULL;
+static string_descriptor_t str_desc[4];
+
+// Correct string descriptor initialization from the example
+static void init_string_desc(void) {
+  for (int idx = 0; idx < 4; idx++) {
+    uint8_t len = 0;
+    uint16_t *wchar_str = (uint16_t *)&str_desc[idx];
+    if (idx == 0) {
+      wchar_str[1] = string_descriptors_base[0][0] | ((uint16_t)string_descriptors_base[0][1] << 8);
+      len = 1;
+    } else if (idx <= 3) {
+      len = strnlen(string_descriptors_base[idx], 31);
+      for (int i = 0; i < len; i++) {
+        wchar_str[i + 1] = string_descriptors_base[idx][i];
+      }
+    } else {
+      len = 0;
+    }
+    wchar_str[0] = (TUSB_DESC_STRING << 8) | (2 * len + 2);
+  }
+}
 
 static usb_descriptor_buffers_t pio_desc_buffers = {
     .device = (uint8_t*)&desc_device,
     .config = desc_cfg,
     .hid_report = pio_hid_reports,
-    .string = (string_descriptor_t*)string_desc_arr,
+    .string = str_desc
 };
+
+static usb_device_t *pio_usb_device = NULL;
+
+void core1_main() {
+  sleep_ms(10);
+  static pio_usb_configuration_t config = PIO_USB_DEFAULT_CONFIG;
+  config.pin_dp = PIO_USB_DP_PIN;
+
+  init_string_desc(); // Correctly initialize string descriptors
+  usb_device = pio_usb_device_init(&config, &pio_desc_buffers);
+
+  while (true) {
+    pio_usb_device_task();
+  }
+}
 
 int main(void) {
   set_sys_clock_khz(120000, true);
   stdio_init_all();
-  printf("--- PIO USB HID Mouse Test (Correct Pins: D+=GP12) ---\n");
+  printf("--- PIO USB HID Test (Based on Official Example) ---\n");
 
-  // Manually enable the D+ pull-up resistor on the correct pin.
   gpio_pull_up(PIO_USB_DP_PIN);
 
-  // Initialize the PIO USB stack with the correct pin configuration.
-  // The library default is DPDM (DM = DP+1), so setting DP to 12 automatically sets DM to 13.
-  static pio_usb_configuration_t pio_cfg = PIO_USB_DEFAULT_CONFIG;
-  pio_cfg.pin_dp = PIO_USB_DP_PIN;
-  pio_usb_device = pio_usb_device_init(&pio_cfg, &pio_desc_buffers);
+  multicore_reset_core1();
+  multicore_launch_core1(core1_main);
 
   while (true) {
-    pio_usb_device_task();
-    sleep_ms(500);
-
-    endpoint_t* ep = pio_usb_get_endpoint(pio_usb_device, 0x81);
-    if (ep) {
-        hid_mouse_report_t mouse_report = {0};
-        mouse_report.x = 5;
-        pio_usb_set_out_data(ep, (uint8_t*)&mouse_report, sizeof(mouse_report));
+    if (pio_usb_device != NULL) {
+      hid_mouse_report_t mouse_report = {0};
+      mouse_report.x = 5; // Move mouse slightly
+      // Use the correct endpoint index (1 for the mouse)
+      endpoint_t *ep = pio_usb_get_endpoint(pio_usb_device, 1);
+      if (ep) {
+        pio_usb_set_out_data(ep, (uint8_t *)&mouse_report, sizeof(mouse_report));
+      }
     }
+    sleep_ms(1000);
   }
   return 0;
 }
