@@ -17,10 +17,19 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake make gcc-arm-none-eabi
 
+      - name: Cache Pico SDK
+        id: cache-pico-sdk
+        uses: actions/cache@v4
+        with:
+          path: pico-sdk
+          key: ${{ runner.os }}-pico-sdk-${{ env.PICO_SDK_VERSION }}
+
       - name: Clone Pico SDK
+        if: steps.cache-pico-sdk.outputs.cache-hit != 'true'
         run: git clone --branch ${{ env.PICO_SDK_VERSION }} --depth 1 https://github.com/raspberrypi/pico-sdk.git
 
       - name: Initialize Pico SDK Submodules
+        if: steps.cache-pico-sdk.outputs.cache-hit != 'true'
         run: cd pico-sdk && git submodule update --init
 
       - name: Compile firmware
