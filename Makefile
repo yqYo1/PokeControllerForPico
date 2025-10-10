@@ -5,6 +5,22 @@
 # export PICO_SDK_PATH=/path/to/pico-sdk
 # PICO_SDK_PATH ?= ../../pico-sdk
 
+# --- PICO_SDK_PATH auto-detection ---
+# If PICO_SDK_PATH is not set, try to find it with ghq
+ifndef PICO_SDK_PATH
+  # Check if ghq is installed
+  ifneq (, $(shell which ghq))
+    GHQ_ROOT := $(shell ghq root)
+    # Check if pico-sdk exists in the ghq root
+    ifneq (, $(wildcard $(GHQ_ROOT)/github.com/raspberrypi/pico-sdk))
+      PICO_SDK_PATH := $(GHQ_ROOT)/github.com/raspberrypi/pico-sdk
+      # Use an info message to let the user know we found it
+      $(info PICO_SDK_PATH not set, using ghq path: $(PICO_SDK_PATH))
+    endif
+  endif
+endif
+# ---
+
 # This allows for `make build pico` or `make pico`
 # It finds the first non-`build`/`clean`/`help` target and uses it as the SKU
 SKU := $(or $(filter-out build clean help,$(MAKECMDGOALS)),pico)
@@ -51,7 +67,9 @@ help:
 
 build:
 	@if [ -z "$(PICO_SDK_PATH)" ]; then \
-		echo "Error: PICO_SDK_PATH is not set. Please set it to your Pico SDK directory." >&2; \
+		echo "Error: PICO_SDK_PATH is not set." >&2; \
+		echo "Please either set the PICO_SDK_PATH environment variable to your Pico SDK directory," >&2; \
+		echo "or install ghq and place the SDK in your ghq root (e.g., \`ghq get raspberrypi/pico-sdk\`)." >&2; \
 		exit 1; \
 	fi
 	@echo "--- Configuring build with CMake ---"
