@@ -22,17 +22,9 @@ ifndef PICO_SDK_PATH
 endif
 # ---
 
-# This allows for `make build pico` or `make pico`
-# It finds the first non-`build`/`clean`/`help` target and uses it as the SKU
-SKU := $(or $(filter-out build clean help,$(MAKECMDGOALS)),pico)
-SKU := $(firstword $(SKU))
-
-# Map SKU to board name
-ifeq ($(SKU), pico)
-  BOARD = pico
-else ifeq ($(SKU), pico2)
-  BOARD = pico2
-endif
+# --- SKUs ---
+# List of all SKUs to build with `make all`
+ALL_SKUS = pico pico2
 
 # Name of the build directory
 BUILD_DIR = build
@@ -40,24 +32,22 @@ BUILD_DIR = build
 # Name of the final artifact
 TARGET = PokeControllerForPico
 TARGET_UF2 = $(TARGET).uf2
-SKU_TARGET_UF2 = $(TARGET)-$(SKU).uf2
 
 
 # --- Targets ---
-.PHONY: all build clean help pico pico2
+.PHONY: all build clean help $(ALL_SKUS)
 
 # Default goal
-all: build
+all: $(ALL_SKUS)
 
-# These targets exist for compatibility with the old Makefile
-pico: build
-pico2: build
+# 'build' is an alias for 'all'
+build: all
 
 help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all/build         Build the firmware (default)."
+	@echo "  all/build         Build all firmware variants (pico, pico2) (default)."
 	@echo "  pico              Build for Raspberry Pi Pico."
 	@echo "  pico2             Build for Raspberry Pi Pico (same as pico)."
 	@echo "  clean             Remove build artifacts."
@@ -66,22 +56,25 @@ help:
 	@echo "Note: Ensure PICO_SDK_PATH is set in your environment."
 
 
-build:
+# Build rule for each SKU
+$(ALL_SKUS):
 	@if [ -z "$(PICO_SDK_PATH)" ]; then \
 		echo "Error: PICO_SDK_PATH is not set." >&2; \
 		echo "Please either set the PICO_SDK_PATH environment variable to your Pico SDK directory," >&2; \
 		echo "or install ghq and place the SDK in your ghq root (e.g., \`ghq get raspberrypi/pico-sdk\`)." >&2; \
 		exit 1; \
 	fi
-	@echo "--- Configuring build with CMake ---"
-	mkdir -p $(BUILD_DIR)/$(SKU)
+	@echo "--- Building SKU: $@ ---"
+	$(eval BOARD := $(if $(filter pico2,$@),pico2,pico))
+	@echo "--- Configuring build with CMake for board $(BOARD) ---"
+	mkdir -p $(BUILD_DIR)/$@
 	@echo "PICO_SDK_PATH is $(PICO_SDK_PATH)"
-	cmake -B $(BUILD_DIR)/$(SKU) -S . -DPICO_BOARD=$(BOARD)
+	cmake -B $(BUILD_DIR)/$@ -S . -DPICO_BOARD=$(BOARD)
 	@echo "--- Building firmware with make ---"
-	$(MAKE) -C $(BUILD_DIR)/$(SKU)
+	$(MAKE) -C $(BUILD_DIR)/$@
 	@echo "--- Renaming artifact ---"
-	mv $(BUILD_DIR)/$(SKU)/$(TARGET_UF2) $(BUILD_DIR)/$(SKU_TARGET_UF2)
-	@echo "--- Build successful: $(BUILD_DIR)/$(SKU_TARGET_UF2) ---"
+	mv $(BUILD_DIR)/$@/$(TARGET_UF2) $(BUILD_DIR)/$(TARGET)-$@.uf2
+	@echo "--- Build successful: $(BUILD_DIR)/$(TARGET)-$@.uf2 ---"
 
 
 clean:
