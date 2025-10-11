@@ -10,10 +10,11 @@
 ifndef PICO_SDK_PATH
   # Check if ghq is installed
   ifneq (, $(shell which ghq))
+    $(info ghq found)
     GHQ_ROOT := $(shell ghq root)
     # Check if pico-sdk exists in the ghq root
     ifneq (, $(wildcard $(GHQ_ROOT)/github.com/raspberrypi/pico-sdk))
-      PICO_SDK_PATH := $(GHQ_ROOT)/github.com/raspberrypi/pico-sdk
+      export PICO_SDK_PATH := $(GHQ_ROOT)/github.com/raspberrypi/pico-sdk
       # Use an info message to let the user know we found it
       $(info PICO_SDK_PATH not set, using ghq path: $(PICO_SDK_PATH))
     endif
@@ -73,13 +74,13 @@ build:
 		exit 1; \
 	fi
 	@echo "--- Configuring build with CMake ---"
-	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)/$(SKU)
 	@echo "PICO_SDK_PATH is $(PICO_SDK_PATH)"
-	cmake -B $(BUILD_DIR) -S . -DPICO_BOARD=$(BOARD)
+	cmake -B $(BUILD_DIR)/$(SKU) -S . -DPICO_BOARD=$(BOARD)
 	@echo "--- Building firmware with make ---"
-	$(MAKE) -C $(BUILD_DIR)
+	$(MAKE) -C $(BUILD_DIR)/$(SKU)
 	@echo "--- Renaming artifact ---"
-	mv $(BUILD_DIR)/$(TARGET_UF2) $(BUILD_DIR)/$(SKU_TARGET_UF2)
+	mv $(BUILD_DIR)/$(SKU)/$(TARGET_UF2) $(BUILD_DIR)/$(SKU_TARGET_UF2)
 	@echo "--- Build successful: $(BUILD_DIR)/$(SKU_TARGET_UF2) ---"
 
 
