@@ -32,6 +32,8 @@ ifeq ($(SKU), pico)
   BOARD = pico
 else ifeq ($(SKU), pico2)
   BOARD = pico2
+else ifeq ($(SKU), waveshare_rp2350_usb_a)
+  BOARD = waveshare_rp2350_usb_a
 endif
 
 # Name of the build directory
@@ -44,7 +46,7 @@ SKU_TARGET_UF2 = $(TARGET)-$(SKU).uf2
 
 
 # --- Targets ---
-.PHONY: all build clean help pico pico2
+.PHONY: all build clean help pico pico2 waveshare_rp2350_usb_a
 
 # Default goal
 all: build
@@ -52,15 +54,17 @@ all: build
 # These targets exist for compatibility with the old Makefile
 pico: build
 pico2: build
+waveshare_rp2350_usb_a: build
 
 help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all/build         Build the firmware (default)."
-	@echo "  pico              Build for Raspberry Pi Pico."
-	@echo "  pico2             Build for Raspberry Pi Pico (same as pico)."
-	@echo "  clean             Remove build artifacts."
+	@echo "  all/build                Build the firmware (default)."
+	@echo "  pico                     Build for Raspberry Pi Pico."
+	@echo "  pico2                    Build for Raspberry Pi Pico (same as pico)."
+	@echo "  waveshare_rp2350_usb_a   Build for Waveshare RP2350 USB-A."
+	@echo "  clean                    Remove build artifacts."
 	@echo "  help              Show this help message."
 	@echo ""
 	@echo "Note: Ensure PICO_SDK_PATH is set in your environment."
