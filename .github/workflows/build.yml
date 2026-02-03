@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        sku: [ pico, pico2 ]
+        sku: [ pico, pico2, waveshare_rp2040_zero ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

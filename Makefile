@@ -24,7 +24,7 @@ endif
 
 # --- SKUs ---
 # List of all SKUs to build with `make all`
-ALL_SKUS = pico pico2
+ALL_SKUS = pico pico2 waveshare_rp2040_zero
 
 # Name of the build directory
 BUILD_DIR = build
@@ -47,9 +47,10 @@ help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all/build         Build all firmware variants (pico, pico2) (default)."
+	@echo "  all/build         Build all firmware variants ($(ALL_SKUS)) (default)."
 	@echo "  pico              Build for Raspberry Pi Pico."
-	@echo "  pico2             Build for Raspberry Pi Pico (same as pico)."
+	@echo "  pico2             Build for Raspberry Pi Pico 2."
+	@echo "  waveshare_rp2040_zero Build for Waveshare RP2040-Zero."
 	@echo "  clean             Remove build artifacts."
 	@echo "  help              Show this help message."
 	@echo ""
@@ -65,7 +66,7 @@ $(ALL_SKUS):
 		exit 1; \
 	fi
 	@echo "--- Building SKU: $@ ---"
-	$(eval BOARD := $(if $(filter pico2,$@),pico2,pico))
+	$(eval BOARD := $@)
 	@echo "--- Configuring build with CMake for board $(BOARD) ---"
 	mkdir -p $(BUILD_DIR)/$@
 	@echo "PICO_SDK_PATH is $(PICO_SDK_PATH)"
