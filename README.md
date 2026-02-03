@@ -10,7 +10,7 @@
 
 必要なもの
 
-- [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/)又は[Raspberry Pi Pico2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) 1台
+- [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/)、[Raspberry Pi Pico2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/)又は[Waveshare RP2040-Zero](https://www.waveshare.com/rp2040-zero.htm) 1台
 - USB-Serial変換器 1台
 - USB ケーブル 2本(PCとUSB-Serial変換器、Raspberry Pi PicoとSwitchの接続用)
 - PicoとUSB-Serial変換器を接続用のジャンパ線等
@@ -36,6 +36,7 @@
     このリポジトリの[Releasesページ](https://github.com/yqYo1/PokeControllerForPico/releases)から、お使いのボードに対応する `.uf2` ファイルをダウンロードします。
     -   Pico: `PokeControllerForPico-pico.uf2`
     -   Pico2: `PokeControllerForPico-pico2.uf2`
+    -   Waveshare RP2040-Zero: `PokeControllerForPico-waveshare_rp2040_zero.uf2`
 
 2.  **PicoをBOOTSELモードでPCに接続します。**
     Picoの「BOOTSEL」ボタンを押しながら、PCにUSBケーブルで接続します。
@@ -103,6 +104,9 @@ sudo apt-get update && sudo apt-get install -y git cmake make gcc-arm-none-eabi
 
    # Raspberry Pi Pico 2向けにビルド
    make pico2
+
+   # Waveshare RP2040-Zero向けにビルド
+   make waveshare_rp2040_zero
    ```
    ビルドが成功すると、`build/` ディレクトリ内に `.uf2` ファイル (例: `PokeControllerForPico-pico.uf2`) が生成されます。
 
