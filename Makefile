@@ -47,7 +47,7 @@ help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all/build         Build all firmware variants (pico, pico2, waveshare_rp2040_zero) (default)."
+	@echo "  all/build         Build all firmware variants ($(ALL_SKUS)) (default)."
 	@echo "  pico              Build for Raspberry Pi Pico."
 	@echo "  pico2             Build for Raspberry Pi Pico 2."
 	@echo "  waveshare_rp2040_zero Build for Waveshare RP2040-Zero."
