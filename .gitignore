@@ -24,3 +24,7 @@
 !/src/*.h
 !/src/*.c
 !/src/*.cpp
+
+!/docs/
+/docs/*
+!/docs/*.md
