@@ -12,50 +12,16 @@ You generally **do not** need to edit the `.gitignore` file when adding new sour
 
 However, if you add a new file or directory at the **root level** of the repository, or a file with a new extension, you **MUST** add a corresponding entry to the `.gitignore` file to un-ignore it (e.g., `!/new_directory/` or `!/new_file.txt`).
 
-## 2. Building the Project (Pico SDK)
+## 2. Project Documentation (`docs/`)
 
-This project uses the Raspberry Pi Pico SDK and a CMake-based build system. Do not use `arduino-cli`.
+When modifying the logic, communication protocol, or MCU commands of this project, you **MUST** review and update the corresponding developer documentation in the `docs/` directory:
 
-### Dependencies
+- `docs/internal_processing.md`: Explains the main loop, state machines (`ProgState`, `proc_state`), and general architecture.
+- `docs/serial_protocol.md`: Describes the serial communication format expected by the MCU, including exactly how the bit-shifting logic works for button/stick inputs.
+- `docs/mcu_commands.md`: Lists built-in macro commands (e.g., `mash_a`, `auto_league`) and provides instructions on how developers/users can define and add their own custom `SetCommand` arrays.
 
-The following packages must be installed on a Debian-based system (like Ubuntu):
-- `cmake`
-- `make`
-- `gcc-arm-none-eabi`
+Before making any changes to `PokeControllerForPico_Func.cpp` or how UART inputs are parsed, **read these documents to understand the expected behavior.** If you add a feature, you must document it in `docs/`.
 
-You can install them with:
-```bash
-sudo apt-get update && sudo apt-get install -y cmake make gcc-arm-none-eabi
-```
+## 3. Building the Project
 
-### Setup and Build Process
-
-To build the firmware, follow these steps:
-
-1.  **Clone the Pico SDK:** Clone a specific, versioned tag of the SDK for reproducible builds. The repository should be placed alongside this project directory or in a known location. The CI uses version `2.2.0`.
-
-    ```bash
-    # In the parent directory of the project, or any other location
-    git clone --branch 2.2.0 --depth 1 https://github.com/raspberrypi/pico-sdk.git
-    ```
-
-2.  **Initialize SDK Submodules:** The SDK requires its submodules (especially TinyUSB) to be initialized.
-
-    ```bash
-    cd pico-sdk
-    git submodule update --init
-    cd ..
-    ```
-
-3.  **Set Environment Variable:** The build system requires the `PICO_SDK_PATH` environment variable to be set to the absolute path of the SDK directory.
-
-    ```bash
-    export PICO_SDK_PATH=/path/to/your/pico-sdk
-    ```
-
-4.  **Build the Firmware:** Run `make` from the root of this project repository.
-
-    ```bash
-    make build
-    ```
-    This will create the `.uf2` file inside the `build/` directory, named according to the SKU (e.g., `PokeControllerForPico-pico.uf2`).
+For build instructions (CMake, Pico SDK, etc.), please refer directly to the user guide in `README.md`. It explains the standard process of fetching the 2.2.0 `pico-sdk` and running `make pico`.
