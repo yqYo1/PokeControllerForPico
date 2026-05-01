@@ -1,0 +1,10 @@
+{
+  "description": "Aボタン + 左スティック X=255 Y=128",
+  "input_line": "0x0012 8 FF 80",
+  "expected_buttons": 4,
+  "expected_hat": 8,
+  "expected_lx": 255,
+  "expected_ly": 128,
+  "expected_rx": 128,
+  "expected_ry": 128
+}

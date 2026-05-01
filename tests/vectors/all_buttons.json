@@ -1,0 +1,10 @@
+{
+  "description": "全ボタン同時押し",
+  "input_line": "0xFFFC 8",
+  "expected_buttons": 16383,
+  "expected_hat": 8,
+  "expected_lx": 128,
+  "expected_ly": 128,
+  "expected_rx": 128,
+  "expected_ry": 128
+}

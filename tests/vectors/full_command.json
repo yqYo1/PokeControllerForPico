@@ -1,0 +1,10 @@
+{
+  "description": "A+Bボタン + 両スティック",
+  "input_line": "0x001B 8 00 00 FF FF",
+  "expected_buttons": 6,
+  "expected_hat": 8,
+  "expected_lx": 0,
+  "expected_ly": 0,
+  "expected_rx": 255,
+  "expected_ry": 255
+}
