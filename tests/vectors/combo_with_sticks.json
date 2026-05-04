@@ -1,0 +1,10 @@
+{
+  "description": "全ボタン+両スティック",
+  "input_line": "0xFFFF 8 00 00 FF FF",
+  "expected_buttons": 16383,
+  "expected_hat": 8,
+  "expected_lx": 0,
+  "expected_ly": 0,
+  "expected_rx": 255,
+  "expected_ry": 255
+}

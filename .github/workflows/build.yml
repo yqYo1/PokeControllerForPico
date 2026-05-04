@@ -5,6 +5,24 @@ env:
   PICO_SDK_VERSION: '2.2.0'
 
 jobs:
+  Host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++
+
+      - name: Configure tests
+        run: cmake -B build_test -S . -DBUILD_TESTING=ON
+
+      - name: Build tests
+        run: cmake --build build_test
+
+      - name: Run tests
+        run: ctest --test-dir build_test --output-on-failure
+
   Build-firmware:
     runs-on: ubuntu-latest
     strategy:

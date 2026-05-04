@@ -25,3 +25,12 @@ Before making any changes to `PokeControllerForPico_Func.cpp` or how UART inputs
 ## 3. Building the Project
 
 For build instructions (CMake, Pico SDK, etc.), please refer directly to the user guide in `README.md`. It explains the standard process of fetching the 2.2.0 `pico-sdk` and running `make pico`.
+
+## 4. Testing Policy (Host-Side Tests)
+
+When adding automated tests for firmware logic, **extract pure, host-testable logic** into platform-independent C++ modules instead of mocking the entire Pico SDK.
+
+- Keep hardware-dependent code (GPIO, UART, timers, etc.) in the firmware-specific source files.
+- Move protocol parsing, state-machine logic, or other algorithms that do not depend on the Pico SDK into separate `.cpp`/`.h` files under `src/`.
+- Use the existing `BUILD_TESTING` CMake option to compile and run these extracted modules on the host (x86_64/Linux) with a standard test framework such as Catch2.
+- This approach ensures the **same source file** is compiled for both the ARM firmware target and the host test runner, avoiding drift between test and production code.

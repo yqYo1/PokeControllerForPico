@@ -1,4 +1,5 @@
 #include "PokeControllerForPico_Func.h"
+#include "serial_parser.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include <stdio.h>
@@ -77,12 +78,13 @@ const char* cmd_name[MAX_BUFFER] = {
 
 static int step_size_buf;
 
-uint8_t pc_lx, pc_ly, pc_rx, pc_ry;
 uint32_t KeyValue;
 uint32_t YearChangeCnt;//0~4294967295までの整数
 uint32_t MonthChangeCnt;//0~4294967295までの整数
 uint32_t DayChangeCnt;//0~4294967295までの整数
 int NowYear = 0;
+
+static pokecon::GamepadState g_gamepad_state;
 
 static unsigned long s_ultime;
 static bool blduration = false;
@@ -124,6 +126,7 @@ void Keyboard_Init(void)
 /* 送信するデータをリセットする */
 void ResetDirections(void)
 {
+  pokecon::ResetGamepadState(g_gamepad_state);
   pc_report.LX = 128;
   pc_report.LY = 128;
   pc_report.RX = 128;
@@ -134,8 +137,6 @@ void ResetDirections(void)
 void ParseLine(char* line)
 {
   char cmd[16];
-  uint16_t p_btns;
-  uint8_t p_hat;
   // get command
   int ret = sscanf(line, "%s", cmd);
   if (ret == EOF) {
@@ -144,113 +145,17 @@ void ParseLine(char* line)
     proc_state = NONE;
     ResetDirections();
   } else if (cmd[0] >= '0' && cmd[0] <= '9') {
-    uint8_t char_pos = 0;
-
-    p_btns = 0;
-    while (line[char_pos] != ' ' && line[char_pos] != '\r') {
-      p_btns *= 16;
-      if (line[char_pos] >= '0' && line[char_pos] <= '9') {
-        p_btns += (line[char_pos] - '0');
-      } else if (line[char_pos] >= 'A' && line[char_pos] <= 'F') {
-        p_btns += (line[char_pos] - 'A' + 10);
-      } else {
-        p_btns += (line[char_pos] - 'a' + 10);
-      }
-      char_pos++;
+    if (pokecon::ParseSerialLine(line, g_gamepad_state)) {
+      pc_report.Hat = g_gamepad_state.hat;
+      pc_report.Button = g_gamepad_state.buttons;
+      pc_report.LX = g_gamepad_state.lx;
+      pc_report.LY = g_gamepad_state.ly;
+      pc_report.RX = g_gamepad_state.rx;
+      pc_report.RY = g_gamepad_state.ry;
+      proc_state = PC_CALL;
+    } else {
+      proc_state = DEBUG2;
     }
-    if (line[char_pos] != '\r') char_pos++;
-
-    p_hat = 0;
-    while (line[char_pos] != ' ' && line[char_pos] != '\r') {
-      p_hat *= 16;
-      if (line[char_pos] >= '0' && line[char_pos] <= '9') {
-        p_hat += (line[char_pos] - '0');
-      } else if (line[char_pos] >= 'A' && line[char_pos] <= 'F') {
-        p_hat += (line[char_pos] - 'A' + 10);
-      } else {
-        p_hat += (line[char_pos] - 'a' + 10);
-      }
-      char_pos++;
-    }
-    if (line[char_pos] != '\r') char_pos++;
-
-    while (line[char_pos] != ' ' && line[char_pos] != '\r') {
-      pc_lx *= 16;
-      if (line[char_pos] >= '0' && line[char_pos] <= '9') {
-        pc_lx += (line[char_pos] - '0');
-      } else if (line[char_pos] >= 'A' && line[char_pos] <= 'F') {
-        pc_lx += (line[char_pos] - 'A' + 10);
-      } else {
-        pc_lx += (line[char_pos] - 'a' + 10);
-      }
-      char_pos++;
-    }
-    if (line[char_pos] != '\r') char_pos++;
-
-    while (line[char_pos] != ' ' && line[char_pos] != '\r') {
-      pc_ly *= 16;
-      if (line[char_pos] >= '0' && line[char_pos] <= '9') {
-        pc_ly += (line[char_pos] - '0');
-      } else if (line[char_pos] >= 'A' && line[char_pos] <= 'F') {
-        pc_ly += (line[char_pos] - 'A' + 10);
-      } else {
-        pc_ly += (line[char_pos] - 'a' + 10);
-      }
-      char_pos++;
-    }
-    if (line[char_pos] != '\r') char_pos++;
-
-    while (line[char_pos] != ' ' && line[char_pos] != '\r') {
-      pc_rx *= 16;
-      if (line[char_pos] >= '0' && line[char_pos] <= '9') {
-        pc_rx += (line[char_pos] - '0');
-      } else if (line[char_pos] >= 'A' && line[char_pos] <= 'F') {
-        pc_rx += (line[char_pos] - 'A' + 10);
-      } else {
-        pc_rx += (line[char_pos] - 'a' + 10);
-      }
-      char_pos++;
-    }
-    if (line[char_pos] != '\r') char_pos++;
-
-    while (line[char_pos] != ' ' && line[char_pos] != '\r') {
-      pc_ry *= 16;
-      if (line[char_pos] >= '0' && line[char_pos] <= '9') {
-        pc_ry += (line[char_pos] - '0');
-      } else if (line[char_pos] >= 'A' && line[char_pos] <= 'F') {
-        pc_ry += (line[char_pos] - 'A' + 10);
-      } else {
-        pc_ry += (line[char_pos] - 'a' + 10);
-      }
-      char_pos++;
-    }
-
-    // HAT : 0(TOP) to 7(TOP_LEFT) in clockwise | 8(CENTER)
-    pc_report.Hat = p_hat;
-
-    // we use bit array for buttons(2 Bytes), which last 2 bits are flags of directions
-    bool use_right = p_btns & 0x0001;
-    bool use_left  = p_btns & 0x0002;
-
-    // Left stick
-    if (use_left) {
-      pc_report.LX = pc_lx;
-      pc_report.LY = pc_ly;
-    }
-
-    // Right stick
-    if (use_right & use_left) {
-      pc_report.RX = pc_rx;
-      pc_report.RY = pc_ry;
-    } else if (use_right) {
-      pc_report.RX = pc_lx;
-      pc_report.RY = pc_ly;
-    }
-
-    p_btns >>= 2;
-    pc_report.Button = p_btns;
-
-    proc_state = PC_CALL;
   } else if (strncmp(line, "\"", 1) == 0) {
     for (int i = 0; i < MAX_BUFFER; i++)
     {

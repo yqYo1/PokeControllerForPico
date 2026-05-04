@@ -1,0 +1,10 @@
+{
+  "description": "ABXY同時押し",
+  "input_line": "0x003C 8",
+  "expected_buttons": 15,
+  "expected_hat": 8,
+  "expected_lx": 128,
+  "expected_ly": 128,
+  "expected_rx": 128,
+  "expected_ry": 128
+}

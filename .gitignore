@@ -28,3 +28,15 @@
 !/docs/
 /docs/*
 !/docs/*.md
+
+!/tests/
+/tests/*
+!/tests/*.cpp
+!/tests/*.h
+!/tests/vectors/
+/tests/vectors/*
+!/tests/vectors/*.json
+
+!/scripts/
+/scripts/*
+!/scripts/*.py

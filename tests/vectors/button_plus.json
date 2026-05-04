@@ -1,0 +1,10 @@
+{
+  "description": "PLUSボタン単独",
+  "input_line": "0x0800 8",
+  "expected_buttons": 512,
+  "expected_hat": 8,
+  "expected_lx": 128,
+  "expected_ly": 128,
+  "expected_rx": 128,
+  "expected_ry": 128
+}

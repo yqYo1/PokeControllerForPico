@@ -1,0 +1,10 @@
+{
+  "description": "LRZLZR同時押し",
+  "input_line": "0x03C0 8",
+  "expected_buttons": 240,
+  "expected_hat": 8,
+  "expected_lx": 128,
+  "expected_ly": 128,
+  "expected_rx": 128,
+  "expected_ry": 128
+}

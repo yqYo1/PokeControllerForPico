@@ -1,0 +1,10 @@
+{
+  "description": "境界値 0, 128, 255",
+  "input_line": "0x0003 8 00 80 FF 00",
+  "expected_buttons": 0,
+  "expected_hat": 8,
+  "expected_lx": 0,
+  "expected_ly": 128,
+  "expected_rx": 255,
+  "expected_ry": 0
+}
